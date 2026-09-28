@@ -1,0 +1,1792 @@
+<title>ChqFlow360 — V4 Live Demo, Dummy Branding</title>
+<style>
+  /* ============ Outer review-tool chrome ============ */
+  :root{
+    --rv-bg:#F6F7FA; --rv-surface:#FFFFFF; --rv-border:#E1E4EC; --rv-text:#1B2033; --rv-text-dim:#5B6178; --rv-accent:#2563EB;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{ --rv-bg:#0E1016; --rv-surface:#171A23; --rv-border:#2A2E3C; --rv-text:#E9EAF2; --rv-text-dim:#9297AC; --rv-accent:#5B8CFF; }
+  }
+  :root[data-theme="light"]{ --rv-bg:#F6F7FA; --rv-surface:#FFFFFF; --rv-border:#E1E4EC; --rv-text:#1B2033; --rv-text-dim:#5B6178; --rv-accent:#2563EB; }
+  :root[data-theme="dark"]{ --rv-bg:#0E1016; --rv-surface:#171A23; --rv-border:#2A2E3C; --rv-text:#E9EAF2; --rv-text-dim:#9297AC; --rv-accent:#5B8CFF; }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--rv-bg); color:var(--rv-text);
+    font-family:'Aptos','Segoe UI',system-ui,-apple-system,sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .review-wrap{max-width:1440px;margin:0 auto;padding:28px 20px 60px;}
+  .review-header{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:6px;}
+  .review-header h1{font-size:23.5px;margin:0;font-weight:700;letter-spacing:-0.01em;}
+  .review-header .sub{color:var(--rv-text-dim);font-size:14.5px;}
+  .review-banner{
+    background:var(--rv-surface); border:1px solid var(--rv-border); border-left:3px solid var(--rv-accent);
+    border-radius:8px; padding:12px 16px; margin:16px 0 14px; font-size:14.5px; color:var(--rv-text-dim); line-height:1.55;
+  }
+  .review-banner b{color:var(--rv-text);}
+  .changelog{
+    background:var(--rv-surface); border:1px solid var(--rv-border); border-radius:8px; padding:12px 16px; margin:0 0 22px;
+    font-size:14px; color:var(--rv-text-dim); line-height:1.7;
+  }
+  .changelog b{color:var(--rv-text);}
+  .changelog code{background:var(--rv-bg);border:1px solid var(--rv-border);border-radius:4px;padding:1px 5px;font-size:12.5px;}
+  .progress-row{display:flex;align-items:center;gap:12px;margin:14px 0 20px;flex-wrap:wrap;}
+  .progress-track{flex:1;min-width:180px;height:6px;background:var(--rv-border);border-radius:99px;overflow:hidden;}
+  .progress-fill{height:100%;background:var(--rv-accent);border-radius:99px;transition:width .25s ease;}
+  .progress-label{font-size:13.5px;color:var(--rv-text-dim);font-variant-numeric:tabular-nums;white-space:nowrap;}
+  .jump-chip-row{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:22px;}
+  .jump-chip{
+    font-size:13px; padding:5px 10px; border-radius:99px; border:1px solid var(--rv-border); background:var(--rv-surface);
+    color:var(--rv-text-dim); cursor:pointer; font-family:inherit;
+  }
+  .jump-chip.active{background:var(--rv-accent); color:#fff; border-color:var(--rv-accent);}
+  .jump-chip.touched::after{content:" \25CF"; font-size:8.5px; color:#F59E0B; vertical-align:middle;}
+  .frame{
+    border:1px solid var(--rv-border); border-radius:14px; overflow:hidden; background:#0B0B10;
+    box-shadow:0 1px 2px rgba(0,0,0,.04), 0 10px 30px -12px rgba(0,0,0,.25);
+  }
+  .frame-toolbar{
+    display:flex; align-items:center; justify-content:space-between; padding:8px 14px; background:var(--rv-surface);
+    border-bottom:1px solid var(--rv-border);
+  }
+  .frame-toolbar .dots{display:flex;gap:6px;}
+  .frame-toolbar .dots span{width:9px;height:9px;border-radius:50%;background:var(--rv-border);}
+  .frame-toolbar .fname{font-size:13.5px;color:var(--rv-text-dim);font-variant-numeric:tabular-nums;}
+  .nav-btns{display:flex;justify-content:space-between;align-items:center;margin-top:16px;gap:10px;}
+  .navbtn{
+    font-family:inherit; font-size:14.5px; font-weight:600; padding:9px 16px; border-radius:8px; border:1px solid var(--rv-border);
+    background:var(--rv-surface); color:var(--rv-text); cursor:pointer;
+  }
+  .navbtn:hover{border-color:var(--rv-accent); color:var(--rv-accent);}
+  .navbtn:disabled{opacity:.35; cursor:default;}
+  .navbtn:disabled:hover{border-color:var(--rv-border); color:var(--rv-text);}
+  .screen-title-row{display:flex;align-items:baseline;gap:10px;margin:22px 0 6px;flex-wrap:wrap;}
+  .screen-title-row .idx{font-size:13.5px;color:var(--rv-accent);font-weight:700;font-variant-numeric:tabular-nums;}
+  .screen-title-row h2{font-size:18.5px;margin:0;font-weight:700;}
+  .screen-title-row .updated-tag{font-size:11.5px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:#F59E0B;background:rgba(245,158,11,.14);padding:2px 8px;border-radius:99px;}
+  .screen-note{font-size:14px;color:var(--rv-text-dim);margin:0 0 12px;max-width:78ch;line-height:1.55;}
+  .screen-note b{color:var(--rv-text);}
+
+  /* ============ App mock — real ChqFlow360 palette ============ */
+  .app-shell{
+    --bg:#0B0B10; --surface:#15151D; --card:#181823; --card2:#1A1A25; --input:#191923; --border:#2B2B3D; --border-lt:#303040;
+    --text:#FFFFFF; --text-dim:#9CA3AF; --text-muted:#8E8EA5; --placeholder:#6B7280;
+    --primary:#2563EB; --primary-hover:#3B82F6; --primary-light:#60A5FA;
+    --purple:#7C3AED; --purple-glow:rgba(37,99,235,.20);
+    --success:#22C55E; --warning:#F59E0B; --danger:#EF4444; --info:#38BDF8;
+    background:var(--bg); color:var(--text); font-size:13.5px; line-height:1.5;
+    height:740px; display:flex; flex-direction:column; position:relative;
+  }
+  .app-shell.light-theme{
+    --bg:#F5F7FC; --surface:#FFFFFF; --card:#FFFFFF; --card2:#F2F4FA; --input:#F2F4FA; --border:#E2E6F0; --border-lt:#D7DCEA;
+    --text:#0A1638; --text-dim:#5A6386; --text-muted:#7883A6; --placeholder:#9AA3C0;
+    --primary:#1D4ED8; --primary-hover:#1640B0; --primary-light:#2563EB;
+    --purple:#7C3AED; --purple-glow:rgba(29,78,216,.14);
+    --success:#22C55E; --warning:#F59E0B; --danger:#EF4444; --info:#38BDF8;
+  }
+  .app-shell *{box-sizing:border-box;}
+  .app-shell button, .app-shell input, .app-shell select{font-family:inherit;}
+  @media (prefers-reduced-motion: reduce){ .app-shell *{transition:none !important; animation:none !important;} }
+
+  .logo-blue{color:var(--primary);font-weight:800;}
+  .logo-amber{color:var(--warning);font-weight:800;}
+
+  /* topbar */
+  .app-topbar{
+    height:56px; flex:0 0 auto; display:flex; align-items:center; gap:16px; padding:0 18px;
+    border-bottom:1px solid var(--border); background:var(--surface);
+  }
+  .brand{display:flex;align-items:end;gap:8px;font-weight:800;font-size:17.5px;letter-spacing:-.01em;white-space:nowrap;}
+  .brand .tenant{font-weight:600;color:var(--text-dim);font-size:13px;}
+  .top-workspace{
+    height:34px; background:var(--card2); border:1px solid var(--border-lt); border-radius:9px; padding:0 12px; display:flex;
+    align-items:center; color:var(--text); font-size:12.5px; font-weight:600; margin-right:auto; max-width:220px; overflow:hidden;
+    white-space:nowrap; text-overflow:ellipsis;
+  }
+  .top-search{
+    width:260px; display:flex; align-items:center; gap:7px; background:var(--card2); border:1px solid var(--border-lt);
+    border-radius:9px; padding:7px 10px; color:var(--placeholder); font-size:13px;
+  }
+  .top-actions{margin-left:14px; display:flex; align-items:center; gap:9px;}
+  .icon-btn{
+    width:30px;height:30px;border-radius:9px;border:1px solid var(--border-lt);background:var(--card2);color:var(--text);
+    display:flex;align-items:center;justify-content:center;position:relative;cursor:default;font-size:13.5px;
+  }
+  .icon-btn:hover{border-color:var(--primary); color:var(--primary-light);}
+  .icon-btn .badge-dot{position:absolute;top:-4px;right:-4px;background:var(--danger);color:#fff;font-size:10.5px;font-weight:700;
+    border-radius:99px;min-width:14px;height:14px;display:flex;align-items:center;justify-content:center;padding:0 3px;}
+  .theme-toggle{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-dim);}
+  .switch{width:34px;height:19px;border-radius:99px;background:var(--card2);border:1px solid var(--border-lt);position:relative;cursor:pointer;flex:0 0 auto;}
+  .switch .knob{position:absolute;top:2px;left:2px;width:13px;height:13px;border-radius:50%;background:var(--primary);transition:left .15s ease, background .15s ease;}
+  #themeSwitch .knob{left:17px;}
+  .switch.on{background:rgba(34,197,94,.18);border-color:var(--success);}
+  .switch.on .knob{left:17px;background:var(--success);}
+  .avatar{width:32px;height:32px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12.5px;font-weight:700;}
+  .user-meta{line-height:1.25;}
+  .user-meta .n{font-size:13px;font-weight:700;color:var(--text);}
+  .user-meta .r{font-size:11px;color:var(--text-muted);}
+
+  /* body: sidebar + main */
+  .app-body{flex:1;display:flex;min-height:0;}
+  .app-sidebar{
+    width:198px; flex:0 0 auto; background:var(--surface); border-right:1px solid var(--border);
+    display:flex; flex-direction:column;
+  }
+  .sidebar-logo{padding:16px 14px 12px; border-bottom:1px solid var(--border); text-align:center;}
+  .sidebar-logo .mark{font-size:23.5px;font-weight:800;}
+  .sidebar-logo .pname{font-size:13.5px;font-weight:700;color:var(--text);margin-top:2px;}
+  .sidebar-scroll{flex:1; overflow-y:auto; padding:10px 8px;}
+  .nav-group-label{font-size:11px; text-transform:uppercase; letter-spacing:.08em; color:var(--text-muted); font-weight:700; padding:10px 8px 6px;}
+  .nav-item{
+    display:flex; align-items:center; gap:9px; padding:8px 10px; border-radius:8px; font-size:13px; color:var(--text-dim);
+    cursor:pointer; margin-bottom:1px; font-weight:600; border-left:3px solid transparent;
+  }
+  .nav-item .ico{width:16px;text-align:center;font-size:13.5px;opacity:.9;}
+  .nav-item.active{background:var(--card2); color:var(--text); border-left-color:var(--primary); font-weight:700;}
+  .nav-item .count{margin-left:auto; font-size:10.5px; background:var(--card2); color:var(--text-muted); padding:1px 6px; border-radius:99px; font-variant-numeric:tabular-nums;}
+  .nav-item.active .count{background:var(--primary); color:#fff;}
+  .sidebar-foot{padding:12px;border-top:1px solid var(--border);font-size:11.5px;color:var(--text-muted);text-align:center;}
+
+  .app-main{flex:1; overflow:auto; padding:22px; min-width:0;}
+  .page-head{display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:18px; flex-wrap:wrap; gap:10px;}
+  .page-head h3{font-size:20.5px; margin:0; font-weight:800; letter-spacing:-.01em;}
+  .page-head .desc{font-size:13px; color:var(--text-dim); margin-top:4px;}
+  .head-actions{display:flex;gap:8px;}
+  .breadcrumb{font-size:12px;color:var(--text-muted);margin-bottom:3px;}
+
+  /* generic components */
+  .btn{
+    font-size:13px; font-weight:700; padding:8px 14px; border-radius:9px; border:1px solid var(--border-lt);
+    background:var(--card2); color:var(--text); cursor:default; display:inline-flex; align-items:center; gap:6px;
+  }
+  .btn.primary{background:var(--primary); border-color:var(--primary); color:#fff;}
+  .btn.danger{background:rgba(239,68,68,.14); border-color:var(--danger); color:var(--danger);}
+  .btn.ghost{background:transparent;}
+  .btn.sm{padding:6px 11px;font-size:12px;}
+  .btn.xs{padding:4px 8px;font-size:10.5px;border-radius:6px;gap:3px;}
+  .btn.xs.success{background:var(--success); border-color:var(--success); color:#062b12;}
+  .btn.xs.warning{background:var(--warning); border-color:var(--warning); color:#2b1b02;}
+  .btn.xs.danger{background:var(--danger); border-color:var(--danger); color:#fff;}
+  .row-actions{display:flex; gap:5px; flex-wrap:nowrap;}
+  .select-col{width:26px;}
+  .preview-modal{
+    background:var(--card); border:1.5px solid var(--primary); border-radius:14px; padding:16px; margin-top:14px;
+    box-shadow:0 16px 40px -12px var(--purple-glow);
+  }
+  .preview-modal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+  .preview-modal-head h4{margin:0;font-size:14.5px;font-weight:800;display:flex;align-items:center;gap:8px;}
+  .preview-modal-head .tag{font-size:10.5px;font-weight:800;text-transform:uppercase;color:var(--primary-light);background:rgba(37,99,235,.14);padding:2px 8px;border-radius:99px;}
+  .preview-caption{font-size:12px;color:var(--text-muted);margin-top:10px;font-style:italic;}
+  .card{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:16px; transition:.2s;}
+  .card:hover{border-color:var(--primary);}
+  .card + .card{margin-top:12px;}
+  .card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+  .card-head h4{font-size:14.5px;margin:0;font-weight:700;}
+  .card-head .hint{font-size:12px;color:var(--text-muted);}
+  .grid{display:grid;gap:14px;}
+  .kpi-grid{grid-template-columns:repeat(auto-fit,minmax(150px,1fr));}
+  .kpi{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:16px; position:relative; overflow:hidden; transition:.2s; cursor:pointer;}
+  .kpi::before{content:"";position:absolute;left:0;top:0;width:4px;height:100%;background:var(--bar,var(--primary));}
+  .kpi:hover{transform:translateY(-3px); border-color:var(--bar,var(--primary)); box-shadow:0 10px 24px -8px var(--purple-glow);}
+  .kpi.c-blue{--bar:var(--primary);} .kpi.c-green{--bar:var(--success);} .kpi.c-amber{--bar:var(--warning);} .kpi.c-red{--bar:var(--danger);} .kpi.c-cyan{--bar:var(--info);}
+  .kpi .label{font-size:12px; color:var(--text-dim); margin-bottom:9px;}
+  .kpi .value{font-size:27.5px; font-weight:800; font-variant-numeric:tabular-nums; letter-spacing:-.01em;}
+  .kpi .delta{font-size:12px; margin-top:7px; font-weight:700;}
+  .kpi .delta.up{color:var(--success);} .kpi .delta.down{color:var(--danger);} .kpi .delta.flat{color:var(--text-muted);}
+  .kpi .kpi-link{font-size:11px; font-weight:800; color:var(--primary-light); margin-top:9px; opacity:.8;}
+  .kpi:hover .kpi-link{opacity:1; text-decoration:underline;}
+  table{width:100%; border-collapse:collapse; font-size:13px;}
+  th{text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:.05em; color:var(--text-muted); font-weight:700; padding:0 10px 9px; border-bottom:1px solid var(--border);}
+  th.num{text-align:right;}
+  td{padding:10px; border-bottom:1px solid var(--border); color:var(--text); vertical-align:middle;}
+  tr:last-child td{border-bottom:none;}
+  td.dim{color:var(--text-dim);}
+  td.meta{color:var(--text-muted); font-size:12px;}
+  .num{font-variant-numeric:tabular-nums; text-align:right;}
+  .chip{display:inline-flex; align-items:center; gap:5px; font-size:11.5px; font-weight:700; padding:3px 9px; border-radius:99px;}
+  .chip.success{background:rgba(34,197,94,.15); color:var(--success);}
+  .chip.warning{background:rgba(245,158,11,.15); color:var(--warning);}
+  .chip.critical{background:rgba(239,68,68,.15); color:var(--danger);}
+  .chip.info{background:rgba(56,189,248,.15); color:var(--info);}
+  .chip.neutral{background:rgba(156,163,175,.15); color:var(--text-dim);}
+  .chip.redact{background:rgba(124,58,237,.15); color:var(--purple);}
+  .chip::before{content:"";width:5px;height:5px;border-radius:50%;background:currentColor;}
+  .badge-solid{display:inline-block; font-size:11.5px; font-weight:700; padding:5px 11px; border-radius:20px;}
+  .badge-solid.success{background:var(--success); color:#062b12;}
+  .badge-solid.warning{background:var(--warning); color:#2b1b02;}
+  .badge-solid.danger{background:var(--danger); color:#fff;}
+  .badge-solid.primary{background:var(--primary); color:#fff;}
+  .field{display:flex; flex-direction:column; gap:5px;}
+  .field label{font-size:11.5px; font-weight:700; color:var(--text-dim); text-transform:uppercase; letter-spacing:.04em;}
+  .field label .req{color:var(--danger);}
+  .field .input, .field .select{
+    border:1px solid var(--border-lt); background:var(--input); border-radius:9px; padding:9px 10px; font-size:13px; color:var(--text);
+  }
+  .field .conf{font-size:11px; margin-top:2px; font-weight:700;}
+  .field .conf.high{color:var(--success);} .field .conf.med{color:var(--warning);} .field .conf.low{color:var(--danger);}
+  .form-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:12px;}
+  .two-col{display:grid; grid-template-columns:1.15fr 1fr; gap:14px; align-items:start;}
+  .img-placeholder{
+    background:repeating-linear-gradient(135deg, var(--card2), var(--card2) 8px, var(--border) 8px, var(--border) 16px);
+    border:1px dashed var(--border-lt); border-radius:11px; height:190px; display:flex; align-items:center; justify-content:center;
+    color:var(--text-muted); font-size:12px; font-weight:600;
+  }
+  .dropzone{border:1.5px dashed var(--border-lt); border-radius:12px; padding:22px; text-align:center; color:var(--text-dim); font-size:12.5px; background:var(--card2);}
+  .dropzone b{color:var(--text); display:block; margin-bottom:3px; font-size:14px;}
+  .tag-row{display:flex; gap:6px; flex-wrap:wrap;}
+  .tab-row{display:flex; gap:4px; border-bottom:1px solid var(--border); margin-bottom:14px; flex-wrap:wrap;}
+  .tab{padding:8px 13px; font-size:12.5px; font-weight:700; color:var(--text-dim); border-bottom:2px solid transparent; margin-bottom:-1px;}
+  .tab.active{color:var(--primary-light); border-color:var(--primary);}
+  .tab.new-tag::after{content:"NEW"; font-size:9.5px; background:var(--warning); color:#2b1b02; padding:1px 5px; border-radius:99px; margin-left:6px; vertical-align:2px; font-weight:800;}
+  .steps{display:flex; align-items:center; gap:0; margin:4px 0 18px;}
+  .step{display:flex; align-items:center; gap:8px; flex:1;}
+  .step .dot{width:23px;height:23px;border-radius:50%;background:var(--card2);border:1.5px solid var(--border-lt);display:flex;align-items:center;justify-content:center;font-size:11.5px;font-weight:800;color:var(--text-dim);flex:0 0 auto;}
+  .step.done .dot{background:var(--success); border-color:var(--success); color:#062b12;}
+  .step.now .dot{background:var(--primary); border-color:var(--primary); color:#fff;}
+  .step .label{font-size:12px;color:var(--text-dim);font-weight:600;white-space:nowrap;}
+  .step.done .label, .step.now .label{color:var(--text);}
+  .step .bar{height:2px;background:var(--border);flex:1;margin:0 6px;}
+  .step.done .bar{background:var(--success);}
+  .side-list{display:flex;flex-direction:column;gap:2px;}
+  .side-list .li{padding:9px 10px;border-radius:8px;font-size:13px;font-weight:600;color:var(--text-dim);display:flex;justify-content:space-between;cursor:default;}
+  .side-list .li.active{background:var(--card2);color:var(--text);border-left:3px solid var(--primary);}
+  .side-list .li .n{font-size:11px;background:var(--card2);padding:1px 6px;border-radius:99px;color:var(--text-muted);}
+  .bar-chart{display:flex; align-items:flex-end; gap:6px; height:110px;}
+  .bar-chart .b{flex:1; background:linear-gradient(180deg,var(--primary-light),var(--primary)); border-radius:5px 5px 0 0;}
+  .bar-chart .col{flex:1; display:flex; flex-direction:column; align-items:center; gap:6px; height:100%; justify-content:flex-end;}
+  .bar-chart .glabel{font-size:10.5px; color:var(--text-muted);}
+  .progress-bar-row{margin-bottom:16px;}
+  .progress-bar-row small{font-size:12px;color:var(--text-dim);}
+  .progress-bar-track{height:8px;background:var(--input);border-radius:20px;overflow:hidden;margin-top:7px;}
+  .progress-bar-fill{height:100%;border-radius:20px;}
+  .empty{padding:26px 10px; text-align:center; color:var(--text-muted); font-size:12.5px;}
+  .flow-note{background:rgba(37,99,235,.10); border:1px solid rgba(37,99,235,.35); color:var(--primary-light); border-radius:9px; padding:10px 12px; font-size:12.5px; font-weight:600; margin-bottom:14px;}
+  .flow-note.amber{background:rgba(245,158,11,.10); border-color:rgba(245,158,11,.35); color:var(--warning);}
+  .flow-note.purple{background:rgba(124,58,237,.10); border-color:rgba(124,58,237,.35); color:var(--purple);}
+  .quicklink-row{display:flex; gap:8px; flex-wrap:wrap;}
+  .quicklink{
+    display:flex; align-items:center; gap:8px; background:var(--card2); border:1px solid var(--border-lt); border-radius:10px;
+    padding:9px 12px; font-size:12.5px; font-weight:700; color:var(--primary-light);
+  }
+  .quicklink .n{background:var(--primary); color:#fff; font-size:11px; padding:1px 7px; border-radius:99px;}
+  .agent-status-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:12px;}
+  .agent-tile{background:var(--card); border:1px solid var(--border); border-left:4px solid var(--primary); border-radius:12px; padding:14px; transition:.2s;}
+  .agent-tile:hover{transform:translateY(-3px); box-shadow:0 10px 24px -8px var(--purple-glow);}
+  .agent-tile .name{font-size:13.5px;font-weight:700;display:flex;align-items:center;justify-content:space-between;}
+  .agent-tile .meta{font-size:11.5px;color:var(--text-muted);margin-top:8px;line-height:1.6;}
+  .agent-flow{display:flex; align-items:center; flex-wrap:wrap; gap:0; margin-bottom:10px;}
+  .agent-node{background:var(--card); border:2px solid var(--border); border-radius:12px; padding:10px 12px; font-size:12px; font-weight:700; cursor:pointer; transition:.15s; min-width:96px; text-align:center;}
+  .agent-node:hover{border-color:var(--primary-light);}
+  .agent-node.active{border-color:var(--primary); background:var(--purple-glow); box-shadow:0 0 0 3px var(--purple-glow);}
+  .agent-node .ic{font-size:17.5px; display:block; margin-bottom:4px;}
+  .agent-arrow{color:var(--text-muted); font-size:17.5px; padding:0 6px; flex:0 0 auto;}
+  .agent-branch{display:flex; align-items:center; gap:10px; margin:4px 0 2px 0; flex-wrap:wrap;}
+  .agent-branch .agent-node{border-style:dashed;}
+  .agent-branch .agent-node.active{border-style:solid;}
+  .agent-branch-label{font-size:11px; color:var(--text-muted); font-style:italic;}
+  .agent-node.plan{border-color:var(--text-muted);}
+  .agent-node.plan.active{border-color:var(--text-dim); background:rgba(120,131,166,.15); box-shadow:0 0 0 3px rgba(120,131,166,.18);}
+  .agent-node.reflect{border-color:#C2410C;}
+  .agent-node.reflect.active{border-color:#C2410C; background:rgba(194,65,12,.14); box-shadow:0 0 0 3px rgba(194,65,12,.18);}
+  .agent-pattern-legend{display:flex; gap:18px; flex-wrap:wrap; font-size:11px; color:var(--text-muted); margin-top:12px; padding-top:10px; border-top:1px solid var(--border);}
+  .agent-pattern-legend .dot{width:8px; height:8px; border-radius:50%; display:inline-block; margin-right:5px; vertical-align:middle;}
+  .evals-box{background:rgba(124,58,237,.08); border:1px solid rgba(124,58,237,.35); border-radius:10px; padding:12px 14px; margin-top:12px;}
+  .evals-box .evals-title{font-size:12px; font-weight:800; color:var(--purple); margin-bottom:8px; text-transform:uppercase; letter-spacing:.03em;}
+  .evals-box .evals-stats{display:flex; gap:22px; flex-wrap:wrap; margin-bottom:8px;}
+  .evals-box .evals-stats div{font-size:12px; color:var(--text-dim);}
+  .evals-box .evals-stats b{display:block; font-size:16.5px; color:var(--text);}
+  .evals-box .evals-note{font-size:12px; color:var(--text-dim); line-height:1.5;}
+  .evals-box .evals-na{font-size:12.5px; color:var(--text-dim); line-height:1.5;}
+  .evals-box .evals-na b{color:var(--purple);}
+  .login-wrap{flex:1; display:flex; align-items:center; justify-content:center; background:
+    radial-gradient(circle at 18% 15%, var(--purple-glow), transparent 42%), var(--bg); padding:20px;}
+  .login-grid{width:100%; max-width:1040px; display:grid; grid-template-columns:1.1fr 1fr; gap:40px; align-items:center;}
+  .hero h1{font-size:31.5px;font-weight:800;color:var(--text);line-height:1.2;letter-spacing:-.01em;margin:0 0 12px;}
+  .hero p{font-size:14px;color:var(--text-dim);line-height:1.6;max-width:400px;margin:0 0 22px;}
+  .agent-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;}
+  .agent-card{display:flex;align-items:center;gap:10px;background:var(--card); border:1px solid var(--border); border-left:3px solid var(--primary); border-radius:11px; padding:12px; transition:.2s;}
+  .agent-card:hover{transform:translateY(-3px); box-shadow:0 10px 22px -8px var(--purple-glow);}
+  .agent-card .ic{color:var(--primary-light);font-size:15.5px;}
+  .agent-card span{font-size:12.5px;font-weight:700;color:var(--text);}
+  .login-card{width:100%; max-width:400px; margin-left:auto; background:var(--card); border:1px solid var(--border); border-radius:18px; padding:28px; position:relative; overflow:hidden; box-shadow:0 25px 60px rgba(0,0,0,.4);}
+  .login-card::before{content:"";position:absolute;top:0;left:0;width:100%;height:4px;background:linear-gradient(90deg,var(--primary),var(--primary-light));}
+  .login-card h2{font-size:25.5px;margin:0 0 4px;font-weight:800;}
+  .login-card .p{font-size:13px;color:var(--text-dim);margin:0 0 18px;}
+  .login-card .field{margin-bottom:12px;}
+  .login-options{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--text-dim);margin:6px 0 16px;}
+  .login-options .links{display:flex;gap:10px;}
+  .login-options a{color:var(--primary-light);font-weight:700;}
+  .security-box{margin-top:14px;display:flex;align-items:center;gap:8px;border:1px solid var(--border);border-left:3px solid var(--primary);background:var(--card2);border-radius:10px;padding:10px 12px;font-size:12px;color:var(--text-dim);}
+  .security-box .ic{color:var(--success);}
+  .login-page-foot{position:absolute; bottom:14px; left:0; right:0; text-align:center; font-size:11.5px; color:var(--text-muted); line-height:1.7;}
+</style>
+<style>
+  html,body{height:100%;margin:0;overflow:hidden;background:#0B0B10;font-family:'Aptos','Segoe UI',system-ui,-apple-system,sans-serif;}
+  .app-shell{height:100vh !important; width:100vw !important;}
+  .nav-item{cursor:pointer;}
+  .nav-item:hover{background:var(--card2); color:var(--text);}
+  .icon-btn, .switch{cursor:pointer;}
+  .avatar{cursor:pointer;}
+  #protoBadge{
+    position:fixed; bottom:14px; right:14px; z-index:999;
+    background:rgba(15,15,22,.94); border:1px dashed #3A3A4E; color:#9CA3AF; font-size:11.5px;
+    padding:7px 12px; border-radius:9px; display:flex; gap:12px; align-items:center;
+    box-shadow:0 8px 24px rgba(0,0,0,.35);
+  }
+  #protoBadge b{color:#E9EAF2;}
+  #protoBadge a{color:#60A5FA;font-weight:700;text-decoration:none;cursor:pointer;}
+  #protoBadge a:hover{text-decoration:underline;}
+  .login-card .btn.primary{cursor:pointer;}
+  .mode-toggle{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--text-dim);cursor:pointer;padding:5px 10px;border-radius:9px;border:1px solid var(--border-lt);background:var(--card2);}
+  .mode-toggle .dot{width:7px;height:7px;border-radius:50%;background:var(--success);}
+  .mode-toggle.embedded .dot{background:var(--warning);}
+  .mode-toggle b{color:var(--text);}
+  .embed-banner{
+    flex:0 0 auto; padding:7px 18px; font-size:12px; font-weight:600; color:#2b1b02; background:linear-gradient(90deg,var(--warning),#FBBF24);
+    display:flex; align-items:center; gap:8px;
+  }
+  .provider-table td.local{color:var(--success);font-weight:700;}
+  .provider-table td.federated{color:var(--warning);font-weight:700;}
+
+  /* ===== Live Demo Player ===== */
+  .demo-player{position:fixed; inset:0; z-index:2000; display:flex; flex-direction:column; height:100vh!important; width:100vw!important;}
+  .demo-stage{flex:1; overflow:hidden; position:relative; padding:0;}
+  .demo-scene{position:absolute; inset:0; opacity:0; visibility:hidden; transition:opacity .45s ease; padding:34px 56px; overflow:auto;}
+  .demo-scene.active{opacity:1; visibility:visible;}
+  .demo-caption-bar{flex:0 0 auto; background:var(--surface); border-top:1px solid var(--border); padding:12px 22px;}
+  .demo-caption-text{font-size:16px; font-weight:700; color:var(--text); margin-bottom:10px; min-height:20px;}
+  .demo-controls{display:flex; align-items:center; gap:12px;}
+  .demo-btn{width:32px;height:32px;border-radius:50%;background:var(--primary);color:#fff;border:none;cursor:pointer;font-size:14.5px;display:flex;align-items:center;justify-content:center;flex:0 0 auto;}
+  .demo-btn.ghost{background:var(--card2); color:var(--text-dim);}
+  .demo-scrubber{flex:1; display:flex; gap:4px;}
+  .demo-dot{flex:1; height:5px; border-radius:3px; background:var(--border-lt); cursor:pointer;}
+  .demo-dot.done{background:var(--primary);}
+  .demo-dot.active{background:var(--primary-light);}
+  .demo-scene-label{font-size:12px; color:var(--text-muted); min-width:76px; text-align:right; font-variant-numeric:tabular-nums;}
+  .demo-speed{display:flex; gap:4px;}
+  .demo-speed button{font-size:11px; padding:3px 8px; border-radius:6px; border:1px solid var(--border-lt); background:var(--card2); color:var(--text-dim); cursor:pointer;}
+  .demo-speed button.active{background:var(--primary); color:#fff; border-color:var(--primary);}
+  .demo-close{position:absolute; top:16px; right:16px; z-index:10;}
+  .demo-title-card{display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; text-align:center;}
+  .demo-title-card h1{font-size:37.5px; margin:0 0 12px; letter-spacing:-.01em;}
+  .demo-title-card p{font-size:15.5px; color:var(--text-dim); max-width:520px;}
+  .demo-title-card .agent-grid{margin-top:26px; max-width:460px;}
+  .demo-glow{animation:demoPulse 1.3s ease-in-out infinite;}
+  @keyframes demoPulse{0%,100%{box-shadow:0 0 0 0 rgba(37,99,235,.45);}50%{box-shadow:0 0 0 9px rgba(37,99,235,0);}}
+  .demo-flash{animation:demoFlash .8s ease;}
+  @keyframes demoFlash{0%{background:var(--primary-light);}100%{background:transparent;}}
+  .run-demo-btn{background:linear-gradient(90deg,var(--primary),var(--purple)); border:none; color:#fff; font-weight:800;}
+  .scan-frame{position:relative; max-width:560px; margin:0 auto; border-radius:10px; overflow:hidden;}
+  .scan-line{position:absolute; left:0; right:0; height:38px; top:-38px; z-index:2;
+    background:linear-gradient(180deg, rgba(96,165,250,0) 0%, rgba(96,165,250,.55) 50%, rgba(96,165,250,0) 100%);
+    animation:scanSweep 2.1s ease-in-out infinite;}
+  @keyframes scanSweep{0%{top:-38px;}55%{top:212px;}100%{top:212px;}}
+  .thumb-row{display:flex; gap:10px; justify-content:center; margin-top:22px;}
+</style>
+<div id="protoBadge"><span><b>PROTOTYPE V4</b> &middot; dummy branding &middot; run the scripted demo from the Dashboard</span><a id="restartDemo">&#8635; Restart from Login</a></div>
+<div id="stage"></div>
+<div id="demoPlayer" style="display:none;"></div>
+<script>
+const SCREENS = [
+  {key:"login", label:"Login", group:null, note:"Unchanged this round &mdash; matches your reference screenshot."},
+  {key:"dashboard", label:"Dashboard", group:"Transaction Flow", note:"Unchanged this round."},
+  {key:"inbox", label:"Cheque Inbox", group:"Transaction Flow", note:"Unchanged this round."},
+  {key:"capture", label:"Capture &amp; Review", group:"Transaction Flow", note:"Unchanged this round."},
+  {key:"verify", label:"Verification Desk", group:"Transaction Flow", updated:true, note:"Rebuilt: one wide table instead of a queue-plus-side-panel. Every cheque is a line item with 7 columns (Signature, Hygiene, Fraud, Amount, etc.), View/Approve/Resubmit/Reject sit on the row itself, and checkboxes let you bunch an action across selected cheques &mdash; entirely your call. A reusable document Preview is shown below the table."},
+  {key:"fraud", label:"Fraud Detection", group:"Transaction Flow", updated:true, note:"Same inline-row-actions pattern as Verification Desk now: View / Clear / Escalate per row, with optional bunching. Still a separate Risk/Compliance oversight view, not merged into Verification Desk."},
+  {key:"loanmap", label:"Loan &amp; Signatory Mapping", group:"Transaction Flow", updated:true, note:"Added a Preview button to each KYC document row."},
+  {key:"lifecycle", label:"Cheque Lifecycle", group:"Transaction Flow", updated:true, note:"Restored the Check-in / Check-out (Inward/Outward) register, which had been dropped when Transfers was added. This covers <b>external</b> movement (customer &harr; system &harr; bank) &mdash; distinct from Cheque Transfers, which is internal-only."},
+  {key:"transfer", label:"Cheque Transfers", group:"Transaction Flow", updated:true, note:"Relabeled explicitly as internal-only (branch/department movement), with a cross-reference to Check-in/Check-out for external movement. Ownership Transfer Requests now has inline View/Approve/Reject per row plus optional bunching, matching Verification Desk."},
+  {key:"analytics", label:"Analytics &amp; Reports", group:"Transaction Flow", note:"Unchanged this round."},
+  {key:"masters", label:"Masters", group:"Administration", note:"Unchanged this round."},
+  {key:"users", label:"Users &amp; Roles", group:"Administration", note:"Unchanged this round."},
+  {key:"workflow", label:"Workflow Configuration", group:"Administration", note:"Unchanged this round."},
+  {key:"audit", label:"Audit Logs", group:"Administration", note:"Unchanged this round."},
+  {key:"agents", label:"AI Agents", group:"Administration", note:"Unchanged this round."},
+  {key:"integrations", label:"Integrations &amp; Deployment Mode", group:"Administration", note:"New in V2."},
+  {key:"settings", label:"Settings", group:"Administration", note:"Unchanged this round."},
+];
+function iconFor(key){
+  const m = {dashboard:'&#9635;',inbox:'&#128229;',capture:'&#128247;',verify:'&#10003;',fraud:'&#128737;',loanmap:'&#128279;',lifecycle:'&#8635;',transfer:'&#8646;',analytics:'&#128200;',masters:'&#128193;',users:'&#128101;',workflow:'&#9881;',audit:'&#128220;',agents:'&#9679;',integrations:'&#128268;',settings:'&#9881;'};
+  return m[key]||'&#9679;';
+}
+const BODIES = {
+
+login: ()=>`
+  <div style="height:64px;flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;padding:0 28px;border-bottom:1px solid var(--border);background:var(--bg);">
+    <div class="brand">ChqFlow360</div>
+    <div style="display:flex;align-items:center;gap:14px;">
+      <div class="mode-toggle${deploymentMode==='embedded'?' embedded':''}" id="modeToggle" title="Click to switch deployment mode"><span class="dot"></span>Mode: <b>${deploymentMode==='embedded'?'Embedded (Plug-in)':'Standalone'}</b></div>
+      <div style="font-size:14px;color:var(--text);font-weight:600;">Workspace A</div>
+    </div>
+  </div>
+  ${deploymentMode==='embedded' ? `
+  <div class="login-wrap">
+    <div class="login-card" style="max-width:460px;margin:0 auto;">
+      <h2 style="font-size:21.5px;">Embedded Session</h2>
+      <p class="p">No separate sign-in &mdash; identity and context are handed off by the host system.</p>
+      <table style="margin-bottom:18px;">
+        <tr><td class="dim">Host System</td><td>Loan Management System</td></tr>
+        <tr><td class="dim">Auth Method</td><td>SSO (OIDC token from host)</td></tr>
+        <tr><td class="dim">Context Received</td><td>Customer: Anand Constructions</td></tr>
+        <tr><td class="dim"></td><td>Loan: LN-2026-08813</td></tr>
+        <tr><td class="dim">Mapped Role</td><td>Maker (from host group &ldquo;Ops-L1&rdquo;)</td></tr>
+      </table>
+      <button class="btn primary sso-continue" style="width:100%; justify-content:center; padding:12px;">&#128268; Continue into Embedded View</button>
+      <div class="security-box"><span class="ic">&#128274;</span>No credentials stored by ChqFlow360 in this mode.</div>
+    </div>
+  </div>
+  ` : `
+  <div class="login-wrap">
+    <div class="login-grid">
+      <div class="hero">
+        <h1>AI Powered<br>Cheque Intelligence</h1>
+        <p>Capture, analyse, validate and manage the complete cheque lifecycle through enterprise-grade Agentic AI automation.</p>
+        <div class="agent-grid">
+          <div class="agent-card"><span class="ic">&#128247;</span><span>VisionAI</span></div>
+          <div class="agent-card"><span class="ic">&#128065;</span><span>ReadAI</span></div>
+          <div class="agent-card"><span class="ic">&#10003;</span><span>ValidateAI</span></div>
+          <div class="agent-card"><span class="ic">&#128279;</span><span>MatchAI</span></div>
+          <div class="agent-card"><span class="ic">&#128737;</span><span>FraudAI</span></div>
+          <div class="agent-card"><span class="ic">&#128200;</span><span>InsightAI</span></div>
+        </div>
+      </div>
+      <div class="login-card">
+        <h2>Cheque-in</h2>
+        <p class="p">Sign in to continue.</p>
+        <div class="field"><label>Workspace</label><div class="select">Workspace A</div></div>
+        <div class="field"><label>User ID</label><div class="input" style="color:var(--placeholder)">Enter User ID</div></div>
+        <div class="field"><label>Password</label><div class="input" style="color:var(--placeholder)">Enter Password</div></div>
+        <div class="login-options">
+          <div>&#9744; Remember Me</div>
+          <div class="links"><a href="#">Sign up?</a><a href="#">Forgot Password?</a></div>
+        </div>
+        <button class="btn primary" style="width:100%; justify-content:center; padding:12px;">&#128274; Secure Sign In</button>
+        <div class="security-box"><span class="ic">&#128274;</span>Enterprise-grade encrypted session.</div>
+      </div>
+    </div>
+    <div class="login-page-foot">&copy; 2026 ChqFlow360<br>Demo build &mdash; dummy branding, for illustration only</div>
+  </div>
+  `}`,
+
+dashboard: ()=>`
+  <div class="page-head"><div><div class="breadcrumb">Home</div><h3>Hey Admin &#128075;</h3><div class="desc">Here's what's happening with your cheque operations today.</div></div>
+    <div class="head-actions"><button class="btn run-demo-btn demo-glow" onclick="openDemo()">&#9654; Run Live Demo (5 Cheques)</button><button class="btn">&#8635; Refresh</button><button class="btn primary" onclick="window.open('test-console.html','_blank')" title="Opens the live Test Console in a new tab">+ New Cheque</button></div></div>
+  <div class="grid kpi-grid">
+    <div class="kpi c-blue"><div class="label">Cheques Received</div><div class="value">428</div><div class="delta up">&#9650; 12.8% Today</div><div class="kpi-link">View Cheque Inbox &rarr;</div></div>
+    <div class="kpi c-green"><div class="label">OCR Completed</div><div class="value">391</div><div class="delta up">91.3% Accuracy</div><div class="kpi-link">View Capture &amp; Review &rarr;</div></div>
+    <div class="kpi c-amber"><div class="label">Pending Verification</div><div class="value">37</div><div class="delta flat">14 High Priority</div><div class="kpi-link">View Verification Desk &rarr;</div></div>
+    <div class="kpi c-red"><div class="label">Fraud Alerts</div><div class="value">4</div><div class="delta down">Immediate Attention</div><div class="kpi-link">View Fraud Detection &rarr;</div></div>
+  </div>
+  <div class="card" style="margin:14px 0;">
+    <div class="card-head"><h4>Checker Shortcuts</h4><span class="hint">Quick links for checker workload</span></div>
+    <div class="quicklink-row">
+      <div class="quicklink">My Approval Queue<span class="n">22</span></div>
+      <div class="quicklink">Bulk Verify Batch<span class="n">3</span></div>
+      <div class="quicklink">Resubmitted to Me<span class="n">5</span></div>
+      <div class="quicklink">Flagged for Fraud Review<span class="n">4</span></div>
+    </div>
+  </div>
+  <div class="two-col">
+    <div class="card">
+      <div class="card-head"><h4>Today's Processing Queue</h4></div>
+      <table>
+        <tr><th>Cheque</th><th>Customer</th><th class="num">Amount</th><th>Status</th></tr>
+        <tr><td>000145</td><td class="dim">ABC Industries</td><td class="num">&#8377;12,50,000</td><td><span class="badge-solid success">OCR Completed</span></td></tr>
+        <tr><td>000146</td><td class="dim">XYZ Traders</td><td class="num">&#8377;8,75,000</td><td><span class="badge-solid warning">Verification</span></td></tr>
+        <tr><td>000147</td><td class="dim">PQR Logistics</td><td class="num">&#8377;21,30,000</td><td><span class="badge-solid danger">Exception</span></td></tr>
+        <tr><td>000148</td><td class="dim">Global Steel Ltd.</td><td class="num">&#8377;4,10,000</td><td><span class="badge-solid primary">AI Review</span></td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <div class="card-head"><h4>AI Command Centre</h4></div>
+      <table>
+        <tr><td>&#129302; OCR Agent</td><td style="text-align:right;color:var(--success)">Active</td></tr>
+        <tr><td>&#129504; Validation Agent</td><td style="text-align:right;color:var(--success)">Running</td></tr>
+        <tr><td>&#128737; Fraud Agent</td><td style="text-align:right;color:var(--warning)">Monitoring</td></tr>
+        <tr><td>&#128274; RedactAI (PII)</td><td style="text-align:right;color:var(--success)">Active</td></tr>
+        <tr><td>&#128196; Mapping Agent</td><td style="text-align:right;color:var(--success)">Healthy</td></tr>
+        <tr><td>&#128200; Analytics Agent</td><td style="text-align:right;color:var(--primary-light)">Learning</td></tr>
+      </table>
+    </div>
+  </div>
+  <div class="two-col" style="margin-top:14px;">
+    <div class="card">
+      <div class="card-head"><h4>Live Processing Pipeline</h4></div>
+      <div class="progress-bar-row"><small>Cheque Capture</small><div class="progress-bar-track"><div class="progress-bar-fill" style="width:100%;background:var(--primary)"></div></div></div>
+      <div class="progress-bar-row"><small>OCR Extraction</small><div class="progress-bar-track"><div class="progress-bar-fill" style="width:91%;background:var(--success)"></div></div></div>
+      <div class="progress-bar-row"><small>AI Validation</small><div class="progress-bar-track"><div class="progress-bar-fill" style="width:76%;background:var(--info)"></div></div></div>
+      <div class="progress-bar-row" style="margin-bottom:0;"><small>Fraud Analysis</small><div class="progress-bar-track"><div class="progress-bar-fill" style="width:42%;background:var(--danger)"></div></div></div>
+    </div>
+    <div class="card">
+      <div class="card-head"><h4>Recent AI Activity</h4></div>
+      <table>
+        <tr><td>&#10003; OCR extracted cheque #145</td><td class="dim num">10 sec</td></tr>
+        <tr><td>&#10003; Signature validated</td><td class="dim num">1 min</td></tr>
+        <tr><td>&#10003; Aadhaar redacted on upload (LN-2026-08813)</td><td class="dim num">3 min</td></tr>
+        <tr><td style="color:var(--warning)">&#9888; Duplicate cheque detected</td><td class="dim num">4 min</td></tr>
+        <tr><td>&#10003; Fraud score generated</td><td class="dim num">6 min</td></tr>
+      </table>
+    </div>
+  </div>`,
+
+inbox: ()=>{
+  const rows = [
+    {no:'000148', cust:'Global Steel Ltd.', amt:'4,10,000', stage:'review', chip:'info', label:'AI Review', owner:'System', upd:'2 min ago', by:'System'},
+    {no:'000147', cust:'PQR Logistics', amt:'21,30,000', stage:'exception', chip:'critical', label:'Exception', owner:'A. Rao', upd:'18 min ago', by:'A. Rao'},
+    {no:'000146', cust:'XYZ Traders', amt:'8,75,000', stage:'checker', chip:'warning', label:'Verification', owner:'P. Iyer', upd:'41 min ago', by:'A. Rao'},
+    {no:'000145', cust:'ABC Industries', amt:'12,50,000', stage:'review', chip:'success', label:'OCR Completed', owner:'A. Rao', upd:'1 hr ago', by:'A. Rao'},
+    {no:'000144', cust:'Nova Infra LLP', amt:'89,500', stage:'needscapture', chip:'neutral', label:'Needs Capture', owner:'&mdash;', upd:'2 hr ago', by:'&mdash;'},
+    {no:'000143', cust:'Verve Realty', amt:'6,12,000', stage:'checker', chip:'warning', label:'Verification', owner:'P. Iyer', upd:'3 hr ago', by:'A. Rao'},
+  ];
+  const tabs = [
+    {key:'all', label:'All'}, {key:'needscapture', label:'Needs Capture'}, {key:'review', label:'In Review'},
+    {key:'checker', label:'Awaiting Checker'}, {key:'exception', label:'Exceptions'},
+  ];
+  const active = subTab.inbox;
+  const filtered = active==='all' ? rows : rows.filter(r=>r.stage===active);
+  const tabHtml = tabs.map(t=>{
+    const n = t.key==='all' ? rows.length : rows.filter(r=>r.stage===t.key).length;
+    return `<div class="tab ${active===t.key?'active':''}" onclick="setSubTab('inbox','${t.key}')">${t.label} (${t.key==='all'?391:n})</div>`;
+  }).join('');
+  const rowsHtml = filtered.length ? filtered.map(r=>`<tr><td>${r.no}</td><td class="dim">${r.cust}</td><td class="num">&#8377;${r.amt}</td><td><span class="chip ${r.chip}">${r.label}</span></td><td class="dim">${r.owner}</td><td class="meta">${r.upd}</td><td class="meta">${r.by}</td></tr>`).join('') : `<tr><td colspan="7"><div class="empty">No cheques in this stage right now.</div></td></tr>`;
+  return `
+  <div class="page-head"><div><h3>Cheque Inbox</h3><div class="desc">Every cheque, any stage &mdash; the triage view before routing</div></div></div>
+  <div class="tab-row">${tabHtml}</div>
+  <table>
+    <tr><th>Cheque</th><th>Customer</th><th class="num">Amount</th><th>Stage</th><th>Owner</th><th>Updated</th><th>Updated By</th></tr>
+    ${rowsHtml}
+  </table>`;
+},
+
+capture: ()=>{
+  const tabs = [{key:'scan',label:'Scan / Camera'},{key:'upload',label:'Upload from Device'},{key:'bulk',label:'Bulk Batch'},{key:'manual',label:'Manual Entry'}];
+  const active = subTab.capture;
+  const tabHtml = tabs.map(t=>`<div class="tab ${active===t.key?'active':''}" onclick="setSubTab('capture','${t.key}')">${t.label}</div>`).join('');
+  const activeEntries = `
+    <div class="card">
+      <div class="card-head"><h4>Active Entries</h4><span class="hint">Snapshot &mdash; select a row to review below</span></div>
+      <table>
+        <tr><th>Cheque</th><th>Customer</th><th>Status</th><th>Updated</th><th>Updated By</th></tr>
+        <tr><td>000931</td><td class="dim">Anand Constructions</td><td><span class="chip warning">Processing</span></td><td class="meta">30 sec ago</td><td class="meta">A. Rao</td></tr>
+        <tr style="background:var(--card2)"><td>000932</td><td class="dim">Nova Infra LLP</td><td><span class="chip success">Read &mdash; ready to submit</span></td><td class="meta">2 min ago</td><td class="meta">A. Rao</td></tr>
+        <tr><td>000933</td><td class="dim">Verve Realty</td><td><span class="chip critical">Read error &mdash; retry</span></td><td class="meta">5 min ago</td><td class="meta">A. Rao</td></tr>
+      </table>
+    </div>`;
+  const ocrReview = `
+  <div class="two-col" style="margin-top:12px;">
+    <div>${chequeSVG({bank:'ICICI Bank', ifsc:'ICIC0000456', branch:'Pune Camp', payee:'Nova Infra LLP', amount:'89,500', amountWords:'Eighty Nine Thousand Five Hundred Only', date:'09072026', chequeNo:'000932', accNo:'62305471002', signed:true})}</div>
+    <div class="card">
+      <div class="card-head"><h4>OCR-extracted fields</h4><span class="hint">Confidence per field</span></div>
+      <div class="form-grid">
+        <div class="field"><label>Bank</label><div class="input">HDFC Bank</div><div class="conf high">98% confidence</div></div>
+        <div class="field"><label>Branch / IFSC</label><div class="input">HDFC0001234</div><div class="conf high">96% confidence</div></div>
+        <div class="field"><label>Cheque No.</label><div class="input">000932</div><div class="conf high">99% confidence</div></div>
+        <div class="field"><label>Date</label><div class="input">09/07/2026</div><div class="conf high">98% confidence</div></div>
+        <div class="field"><label>Amount (&#8377;)</label><div class="input">89,500</div><div class="conf high">96% confidence</div></div>
+        <div class="field"><label>Amount in Words</label><div class="input">Eighty Nine Thousand Five Hundred</div><div class="conf med">83% confidence &mdash; verify</div></div>
+        <div class="field"><label>Payee</label><div class="input">Nova Infra LLP</div><div class="conf high">95% confidence</div></div>
+        <div class="field"><label>Drawer</label><div class="input">Nova Infra LLP</div><div class="conf high">93% confidence</div></div>
+        <div class="field"><label>Signed</label><div class="input">Yes</div><div class="conf high">Detected</div></div>
+      </div>
+      <div class="tag-row" style="margin-top:12px;">
+        <span class="chip success">Figures = words match</span>
+        <span class="chip neutral">Signature check: pending checker</span>
+      </div>
+      <div style="margin-top:12px;"><button class="btn primary sm">Confirm &amp; Submit for Checker</button></div>
+    </div>
+  </div>`;
+  let body;
+  if(active==='scan'){
+    body = `<div class="two-col">
+      <div class="dropzone">
+        <b>&#128247; Scan or capture a cheque</b>
+        Connect a scanner, or use &ldquo;Open Camera&rdquo; on the mobile app.
+        <div style="margin-top:12px;"><button class="btn primary sm">Open Camera</button> <button class="btn sm">Use Scanner</button></div>
+      </div>
+      ${activeEntries}
+    </div>${ocrReview}`;
+  } else if(active==='upload'){
+    body = `<div class="two-col">
+      <div class="dropzone">
+        <b>&#128193; Upload from this computer</b>
+        Drag a file here, or click to browse your local drive &mdash; desktop-only, per Settings &rsaquo; Capture &amp; Upload Guardrails.
+        <div style="margin-top:12px;"><button class="btn primary sm">Browse Files&hellip;</button></div>
+      </div>
+      ${activeEntries}
+    </div>${ocrReview}`;
+  } else if(active==='bulk'){
+    body = `<div class="card">
+      <div class="card-head"><h4>Bulk Batch Import</h4><span class="hint">Lives here, not a separate module</span></div>
+      <div class="dropzone" style="margin-bottom:12px;"><b>&#128228; Drag a batch file here</b>CSV/XLSX per template &mdash; up to 500 cheques per batch &middot; <button class="btn sm" style="margin-top:8px;">Download Template</button></div>
+      <table>
+        <tr><th>File</th><th>Rows</th><th>Status</th><th>Updated</th><th>Updated By</th></tr>
+        <tr><td>batch_0709_maker.xlsx</td><td class="num">86</td><td><span class="chip success">Completed</span></td><td class="meta">1 hr ago</td><td class="meta">A. Rao</td></tr>
+        <tr><td>batch_0707_maker.xlsx</td><td class="num">40</td><td><span class="chip critical">3 rows failed</span></td><td class="meta">2 days ago</td><td class="meta">A. Rao</td></tr>
+      </table>
+    </div>`;
+  } else {
+    body = `<div class="card">
+      <div class="card-head"><h4>Manual Entry</h4><span class="hint">No scan or upload &mdash; key it in directly</span></div>
+      <div class="form-grid">
+        <div class="field"><label>Bank</label><div class="input" style="color:var(--placeholder)">Select bank&hellip;</div></div>
+        <div class="field"><label>Branch / IFSC</label><div class="input" style="color:var(--placeholder)">Enter IFSC&hellip;</div></div>
+        <div class="field"><label>Cheque No.</label><div class="input" style="color:var(--placeholder)">Enter cheque number&hellip;</div></div>
+        <div class="field"><label>Date</label><div class="input" style="color:var(--placeholder)">DD/MM/YYYY</div></div>
+        <div class="field"><label>Amount (&#8377;)</label><div class="input" style="color:var(--placeholder)">0.00</div></div>
+        <div class="field"><label>Amount in Words</label><div class="input" style="color:var(--placeholder)">Auto-suggested from amount&hellip;</div></div>
+        <div class="field"><label>Payee</label><div class="input" style="color:var(--placeholder)">Enter payee&hellip;</div></div>
+        <div class="field"><label>Drawer</label><div class="input" style="color:var(--placeholder)">Enter drawer&hellip;</div></div>
+        <div class="field"><label>Signed</label><div class="select">Yes</div></div>
+      </div>
+      <div style="margin-top:12px;"><button class="btn primary sm">Submit for Checker</button></div>
+    </div>`;
+  }
+  return `
+  <div class="page-head"><div><div class="breadcrumb">Transaction Flow</div><h3>Capture &amp; Review</h3><div class="desc">Capture, confirm, and submit &mdash; one screen, start to finish</div></div>
+    <button class="btn primary">Submit for Checker Approval</button></div>
+  <div class="flow-note purple">Capture and field review now live on one screen &mdash; no more switching to a separate OCR Studio to finish a single cheque.</div>
+  <div class="steps">
+    <div class="step done"><div class="dot">&#10003;</div><div class="label">Capture</div></div><div class="bar"></div>
+    <div class="step now"><div class="dot">2</div><div class="label">Review &amp; Submit</div></div><div class="bar"></div>
+    <div class="step"><div class="dot">3</div><div class="label">Verification Desk</div></div><div class="bar"></div>
+    <div class="step"><div class="dot">4</div><div class="label">Registered</div></div>
+  </div>
+  <div class="tab-row">${tabHtml}</div>
+  <div class="flow-note">Guardrails are now Admin-configurable per workspace (Settings &rsaquo; Capture &amp; Upload Guardrails) rather than fixed in code. On desktop, use scanner or upload a file from this computer; camera capture is for the mobile app.</div>
+  ${body}`;
+},
+
+verify: ()=>`
+  <div class="page-head"><div><div class="breadcrumb">Transaction Flow</div><h3>Verification Desk</h3><div class="desc">22 cheques awaiting your decision &mdash; every line item scannable and actionable, no click-through needed</div></div></div>
+  <div class="grid kpi-grid" style="margin-bottom:14px;">
+    <div class="kpi c-amber"><div class="label">Pending My Approval</div><div class="value">22</div><div class="delta flat">Steady</div><div class="kpi-link">View Queue &rarr;</div></div>
+    <div class="kpi c-green"><div class="label">Approved Today</div><div class="value">31</div><div class="delta up">&#9650; 9%</div><div class="kpi-link">View Approved &rarr;</div></div>
+    <div class="kpi c-red"><div class="label">Rejected Today</div><div class="value">3</div><div class="delta flat">Steady</div><div class="kpi-link">View Rejected &rarr;</div></div>
+    <div class="kpi c-blue"><div class="label">Avg. Decision Time</div><div class="value">4.1m</div><div class="delta up">&#9660; faster</div><div class="kpi-link">View Trend &rarr;</div></div>
+  </div>
+  <div class="card">
+    <div class="card-head"><h4>Queue</h4><span class="hint">2 selected &mdash; bunching is optional, your call</span></div>
+    <div class="tag-row" style="margin-bottom:10px;">
+      <button class="btn sm primary">&#10003; Bunch Approve (2)</button>
+      <button class="btn sm">&#8635; Bunch Resubmit</button>
+      <button class="btn sm danger">&#10005; Bunch Reject</button>
+      <button class="btn sm">Export Selected</button>
+    </div>
+    <table>
+      <tr><th class="select-col"></th><th>Cheque</th><th>Customer</th><th class="num">Amount</th><th>Signature</th><th>Hygiene</th><th>Fraud</th><th>Updated</th><th>Actions</th></tr>
+      <tr style="background:var(--card2)">
+        <td>&#9745;</td><td>#004921</td><td class="dim">Anand Constructions</td><td class="num">&#8377;2,45,000</td>
+        <td><span class="chip success">94%</span></td><td><span class="chip success">OK</span></td><td><span class="chip neutral">None</span></td>
+        <td class="meta">12 min ago</td>
+        <td><div class="row-actions"><button class="btn xs">View</button><button class="btn xs success">Approve</button><button class="btn xs warning">Resubmit</button><button class="btn xs danger">Reject</button></div></td>
+      </tr>
+      <tr>
+        <td>&#9745;</td><td>#004918</td><td class="dim">Nova Infra LLP</td><td class="num">&#8377;89,500</td>
+        <td><span class="chip success">97%</span></td><td><span class="chip success">OK</span></td><td><span class="chip neutral">None</span></td>
+        <td class="meta">25 min ago</td>
+        <td><div class="row-actions"><button class="btn xs">View</button><button class="btn xs success">Approve</button><button class="btn xs warning">Resubmit</button><button class="btn xs danger">Reject</button></div></td>
+      </tr>
+      <tr>
+        <td>&#9744;</td><td>#004909</td><td class="dim">Verve Realty</td><td class="num">&#8377;6,12,000</td>
+        <td><span class="chip critical">61%</span></td><td><span class="chip success">OK</span></td><td><span class="chip critical">Sig. mismatch</span></td>
+        <td class="meta">1 hr ago</td>
+        <td><div class="row-actions"><button class="btn xs">View</button><button class="btn xs success">Approve</button><button class="btn xs warning">Resubmit</button><button class="btn xs danger">Reject</button></div></td>
+      </tr>
+      <tr>
+        <td>&#9744;</td><td>#004902</td><td class="dim">Global Steel Ltd.</td><td class="num">&#8377;4,10,000</td>
+        <td><span class="chip success">91%</span></td><td><span class="chip warning">Verify words</span></td><td><span class="chip neutral">None</span></td>
+        <td class="meta">2 hr ago</td>
+        <td><div class="row-actions"><button class="btn xs">View</button><button class="btn xs success">Approve</button><button class="btn xs warning">Resubmit</button><button class="btn xs danger">Reject</button></div></td>
+      </tr>
+      <tr>
+        <td>&#9744;</td><td>#004890</td><td class="dim">XYZ Traders</td><td class="num">&#8377;8,75,000</td>
+        <td><span class="chip success">96%</span></td><td><span class="chip success">OK</span></td><td><span class="chip neutral">None</span></td>
+        <td class="meta">3 hr ago</td>
+        <td><div class="row-actions"><button class="btn xs">View</button><button class="btn xs success">Approve</button><button class="btn xs warning">Resubmit</button><button class="btn xs danger">Reject</button></div></td>
+      </tr>
+    </table>
+    <div class="flow-note" style="margin-top:12px;margin-bottom:0;">Reject and Resubmit open a compact inline remark field before confirming &ndash; remark stays mandatory, but there's no full-page detour to enter it.</div>
+  </div>
+
+  <div class="preview-modal">
+    <div class="preview-modal-head"><h4>&#128065; Document Preview &mdash; #004921 <span class="tag">Opened from &ldquo;View&rdquo;</span></h4><button class="btn xs ghost">Close &times;</button></div>
+    <div class="two-col">
+      <div>${chequeSVG({bank:'HDFC Bank', ifsc:'HDFC0001234', branch:'Mumbai Fort', payee:'Anand Constructions', amount:'2,45,000', amountWords:'Two Lakh Forty Five Thousand Only', date:'09072026', chequeNo:'004921', accNo:'50100987650001', signed:true})}</div>
+      <div>
+        <div class="img-placeholder" style="height:88px;">Specimen signature on file (KYC)</div>
+        <table style="margin-top:10px;">
+          <tr><td class="dim">Signature Match</td><td class="num">94%</td></tr>
+          <tr><td class="dim">Matched Signatory</td><td>R. Anand</td></tr>
+          <tr><td class="dim">Amount / Words Match</td><td><span class="chip success">Confirmed</span></td></tr>
+        </table>
+      </div>
+    </div>
+    <div class="preview-caption">This is what &ldquo;View&rdquo; opens for any row, inline &mdash; the same preview pattern is reused on Fraud Detection, Cheque Transfers, and KYC Documents.</div>
+  </div>
+
+  <div class="card" style="margin-top:12px;">
+    <div class="card-head"><h4>Bulk Batch Review &mdash; batch_0709_maker.xlsx</h4><span class="hint">86 rows, imported by A. Rao &middot; lives here, not a separate module</span></div>
+    <div class="grid kpi-grid" style="margin-bottom:12px;">
+      <div class="kpi c-amber"><div class="label">Pending Bulk Verification</div><div class="value">86</div><div class="kpi-link">View Batch &rarr;</div></div>
+      <div class="kpi c-green"><div class="label">Verified Today</div><div class="value">54</div><div class="kpi-link">View Verified &rarr;</div></div>
+      <div class="kpi c-red"><div class="label">Rejected / Resubmitted</div><div class="value">6</div><div class="kpi-link">View Rejected &rarr;</div></div>
+    </div>
+    <div class="tag-row"><button class="btn sm">View Batch</button><button class="btn sm">Export</button><button class="btn sm primary">Bulk Verify</button><button class="btn sm">Approve</button><button class="btn sm danger">Reject / Resubmit</button></div>
+  </div>`,
+
+fraud: ()=>`
+  <div class="page-head"><div><h3>Fraud Detection</h3><div class="desc">Signature-match and fraud agent flags &mdash; Risk/Compliance oversight, separate from the routine checker queue</div></div></div>
+  <div class="agent-status-grid" style="margin-bottom:14px;">
+    <div class="agent-tile"><div class="name">Signature-Match Agent<span class="chip success">Active</span></div><div class="meta">Local model &middot; 1,204 checks today &middot; avg 94% confidence</div></div>
+    <div class="agent-tile"><div class="name">Fraud Agent<span class="chip warning">Monitoring</span></div><div class="meta">4 open flags &middot; duplicate + high-value pattern checks</div></div>
+  </div>
+  <div class="card">
+    <div class="card-head"><h4>Flagged for Review</h4><span class="hint">1 selected</span></div>
+    <div class="tag-row" style="margin-bottom:10px;"><button class="btn sm primary">Bunch Clear (1)</button><button class="btn sm danger">Bunch Escalate</button></div>
+    <table>
+      <tr><th class="select-col"></th><th>Cheque</th><th>Customer</th><th>Flag</th><th class="num">Score</th><th>Updated</th><th>Actions</th></tr>
+      <tr style="background:var(--card2)">
+        <td>&#9745;</td><td>#004909</td><td class="dim">Verve Realty</td><td><span class="chip critical">Signature mismatch</span></td><td class="num">61%</td><td class="meta">1 hr ago</td>
+        <td><div class="row-actions"><button class="btn xs">View</button><button class="btn xs primary">Clear</button><button class="btn xs danger">Escalate</button></div></td>
+      </tr>
+      <tr>
+        <td>&#9744;</td><td>#004833</td><td class="dim">Anand Constructions</td><td><span class="chip critical">Duplicate cheque no.</span></td><td class="num">&mdash;</td><td class="meta">6 hr ago</td>
+        <td><div class="row-actions"><button class="btn xs">View</button><button class="btn xs primary">Clear</button><button class="btn xs danger">Escalate</button></div></td>
+      </tr>
+      <tr>
+        <td>&#9744;</td><td>#004790</td><td class="dim">Global Steel Ltd.</td><td><span class="chip warning">High-value, new payee</span></td><td class="num">72%</td><td class="meta">1 day ago</td>
+        <td><div class="row-actions"><button class="btn xs">View</button><button class="btn xs primary">Clear</button><button class="btn xs danger">Escalate</button></div></td>
+      </tr>
+    </table>
+  </div>`,
+
+loanmap: ()=> deploymentMode==='embedded' ? `
+  <div class="page-head"><div><div class="breadcrumb">Transaction Flow</div><h3>Loan &amp; Signatory Mapping</h3><div class="desc">Connector: <span class="chip success" style="margin-left:2px;">Federated &middot; Live</span> &mdash; fetched from Host LMS, no local copy kept</div></div>
+    <button class="btn">View in Host System &#8599;</button></div>
+  <div class="flow-note purple">This is a <b>read-only mirror</b> in Embedded mode. Loan, borrower, and signatory data are owned by the Host Loan Management System and streamed live via the connector configured at Integrations &amp; Deployment Mode.</div>
+  <div class="two-col">
+    <div class="card">
+      <div class="card-head"><h4>Loan Search</h4><span class="hint">Synced 2 min ago</span></div>
+      <table>
+        <tr><td class="dim">Loan / Account ID</td><td>LN-2026-08813</td></tr>
+        <tr><td class="dim">Borrower</td><td>Anand Constructions</td></tr>
+        <tr><td class="dim">Loan Type</td><td>Construction Finance</td></tr>
+        <tr><td class="dim">Sanctioned</td><td class="num">&#8377;5,00,00,000</td></tr>
+        <tr><td class="dim">Bank Account No.</td><td>XXXXXXXX4821 <span class="chip redact">Masked</span></td></tr>
+      </table>
+      <div class="card-head" style="margin-top:16px;"><h4>Mapped Signatories</h4></div>
+      <table>
+        <tr><th>Name</th><th>Role</th><th>KYC</th><th>Updated</th></tr>
+        <tr><td>R. Anand</td><td class="dim">Authorized Signatory</td><td><span class="chip success">Verified</span></td><td class="meta">3 days ago</td></tr>
+        <tr><td>S. Anand</td><td class="dim">Co-signatory</td><td><span class="chip success">Verified</span></td><td class="meta">3 days ago</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <div class="card-head"><h4>KYC Documents</h4><span class="hint">Managed in Host LMS &middot; view only</span></div>
+      <table>
+        <tr><th>Document</th><th>Status</th><th>PII Redaction</th><th></th></tr>
+        <tr><td class="dim">PAN Card</td><td><span class="chip success">Verified</span></td><td class="dim">&mdash;</td><td><button class="btn xs">Preview</button></td></tr>
+        <tr><td class="dim">Aadhaar</td><td><span class="chip success">Verified</span></td><td><span class="chip redact">Masked in transit</span></td><td><button class="btn xs">Preview</button></td></tr>
+        <tr><td class="dim">Specimen Signature</td><td><span class="chip success">Verified</span></td><td class="dim">&mdash;</td><td><button class="btn xs">Preview</button></td></tr>
+      </table>
+      <div class="flow-note purple" style="margin-top:10px;margin-bottom:0;">RedactAI still verifies every document is properly masked on receipt, even though the Host LMS is the source of truth.</div>
+    </div>
+  </div>` : `
+  <div class="page-head"><div><div class="breadcrumb">Transaction Flow</div><h3>Loan &amp; Signatory Mapping</h3><div class="desc">Connector: <span class="chip neutral" style="margin-left:2px;">Manual mode</span> &mdash; API integration deferred</div></div>
+    <button class="btn primary">+ Map Manually</button></div>
+  <div class="flow-note">No live connector to the loan management system yet, by your instruction. Built against a pluggable connector interface so a real API can be wired in later without changing this layout.</div>
+  <div class="two-col">
+    <div class="card">
+      <div class="card-head"><h4>Loan Search</h4></div>
+      <div class="field" style="margin-bottom:10px;"><label>Loan / Account ID</label><div class="input">LN-2026-08813</div></div>
+      <table>
+        <tr><td class="dim">Borrower</td><td>Anand Constructions</td></tr>
+        <tr><td class="dim">Loan Type</td><td>Construction Finance</td></tr>
+        <tr><td class="dim">Sanctioned</td><td class="num">&#8377;5,00,00,000</td></tr>
+        <tr><td class="dim">Bank Account No.</td><td>XXXXXXXX4821 <span class="chip redact">Masked</span></td></tr>
+      </table>
+      <div class="card-head" style="margin-top:16px;"><h4>Mapped Signatories</h4></div>
+      <table>
+        <tr><th>Name</th><th>Role</th><th>KYC</th><th>Updated</th><th>Updated By</th></tr>
+        <tr><td>R. Anand</td><td class="dim">Authorized Signatory</td><td><span class="chip success">Verified</span></td><td class="meta">3 days ago</td><td class="meta">R. Kapoor</td></tr>
+        <tr><td>S. Anand</td><td class="dim">Co-signatory</td><td><span class="chip success">Verified</span></td><td class="meta">3 days ago</td><td class="meta">R. Kapoor</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <div class="card-head"><h4>KYC Documents</h4><span class="hint">Per RBI norms, India</span></div>
+      <table>
+        <tr><th>Document</th><th>Status</th><th>PII Redaction</th><th>Updated</th><th></th></tr>
+        <tr><td class="dim">PAN Card</td><td><span class="chip success">Verified</span></td><td class="dim">&mdash;</td><td class="meta">3 days ago</td><td><button class="btn xs">Preview</button></td></tr>
+        <tr><td class="dim">Aadhaar</td><td><span class="chip success">Verified</span></td><td><span class="chip redact">Auto-redacted &mdash; last 4 only</span></td><td class="meta">3 days ago</td><td><button class="btn xs">Preview</button></td></tr>
+        <tr><td class="dim">Photograph</td><td><span class="chip success">Verified</span></td><td class="dim">&mdash;</td><td class="meta">3 days ago</td><td><button class="btn xs">Preview</button></td></tr>
+        <tr><td class="dim">Specimen Signature</td><td><span class="chip success">Verified</span></td><td class="dim">&mdash;</td><td class="meta">3 days ago</td><td><button class="btn xs">Preview</button></td></tr>
+        <tr><td class="dim">Address Proof</td><td><span class="chip warning">Pending upload</span></td><td class="dim">&mdash;</td><td class="meta">&mdash;</td><td class="dim">&mdash;</td></tr>
+        <tr><td class="dim">CKYC Number</td><td><span class="chip neutral">Not linked</span></td><td class="dim">&mdash;</td><td class="meta">&mdash;</td><td class="dim">&mdash;</td></tr>
+      </table>
+      <div class="flow-note purple" style="margin-top:10px;margin-bottom:0;">RedactAI runs automatically the instant a document is uploaded &mdash; PII is masked before the file is even stored, per RBI norms.</div>
+      <div style="margin-top:10px;"><button class="btn sm">+ Upload Document</button></div>
+    </div>
+  </div>`,
+
+lifecycle: ()=>{
+  const data = {
+    'Anand Constructions': {count:6, cheques:[
+        {no:'#004790', amt:'3,20,000', storage:'FRFC &middot; Mumbai &middot; B-14', chip:'warning', label:'Due Soon', upd:'2 hr ago'},
+        {no:'#004712', amt:'1,10,000', storage:'Branch &middot; Pune', chip:'success', label:'Presented', upd:'4 days ago'},
+        {no:'#004601', amt:'75,000', storage:'Locker &middot; Mumbai', chip:'neutral', label:'Surrendered', upd:'2 wks ago'},
+      ], timelineChq:'#004790', timeline:[
+        {done:true, label:'Registered', when:'05 Jul 2026, 10:12 &middot; Maker: A. Rao'},
+        {done:true, label:'Checker Approved', when:'05 Jul 2026, 15:40 &middot; Checker: P. Iyer'},
+        {done:true, label:'Stored &mdash; FRFC Locker B-14', when:'06 Jul 2026, 09:05 &middot; Check-in by branch custodian'},
+        {done:false, label:'Due for Presentation', when:'Due 11 Jul 2026 &middot; 2 days remaining'},
+      ], reg:[
+        {no:'#004790', dir:'success', dirLabel:'Inward', note:'Received from Anand Constructions', by:'A. Rao', upd:'05 Jul, 10:12'},
+        {no:'#004712', dir:'warning', dirLabel:'Outward', note:'Sent for presentation &mdash; HDFC Bank', by:'Custodian, Pune', upd:'4 days ago'},
+      ]},
+    'Nova Infra LLP': {count:3, cheques:[
+        {no:'#004918', amt:'89,500', storage:'FRFC &middot; Mumbai &middot; B-09', chip:'warning', label:'Due Soon', upd:'25 min ago'},
+        {no:'#004650', amt:'1,45,000', storage:'Branch &middot; Pune', chip:'success', label:'Presented', upd:'1 wk ago'},
+      ], timelineChq:'#004918', timeline:[
+        {done:true, label:'Registered', when:'09 Jul 2026, 08:40 &middot; Maker: A. Rao'},
+        {done:true, label:'Checker Approved', when:'09 Jul 2026, 09:05 &middot; Checker: P. Iyer'},
+        {done:false, label:'Due for Presentation', when:'Due 14 Jul 2026 &middot; 5 days remaining'},
+      ], reg:[
+        {no:'#004918', dir:'success', dirLabel:'Inward', note:'Received from Nova Infra LLP', by:'A. Rao', upd:'25 min ago'},
+      ]},
+    'Verve Realty': {count:2, cheques:[
+        {no:'#004909', amt:'6,12,000', storage:'FRFC &middot; Mumbai &middot; B-14', chip:'critical', label:'Signature Review', upd:'1 hr ago'},
+      ], timelineChq:'#004909', timeline:[
+        {done:true, label:'Registered', when:'09 Jul 2026, 07:55 &middot; Maker: A. Rao'},
+        {done:false, label:'Flagged &mdash; Fraud Detection', when:'Signature match 61% &middot; awaiting Risk review'},
+      ], reg:[
+        {no:'#004909', dir:'success', dirLabel:'Inward', note:'Received from Verve Realty', by:'A. Rao', upd:'1 hr ago'},
+      ]},
+    'Global Steel Ltd.': {count:4, cheques:[
+        {no:'#004833', amt:'4,10,000', storage:'Branch &middot; Ahmedabad', chip:'critical', label:'Duplicate Flag', upd:'6 hr ago'},
+        {no:'#004601b', amt:'2,00,000', storage:'Locker &middot; Mumbai', chip:'neutral', label:'Surrendered', upd:'3 wks ago'},
+      ], timelineChq:'#004833', timeline:[
+        {done:true, label:'Registered', when:'09 Jul 2026, 03:10 &middot; Maker: A. Rao'},
+        {done:false, label:'Flagged &mdash; Duplicate cheque no.', when:'Routed to Fraud Detection'},
+      ], reg:[
+        {no:'#004833', dir:'success', dirLabel:'Inward', note:'Received from Global Steel Ltd.', by:'A. Rao', upd:'6 hr ago'},
+      ]},
+  };
+  const names = Object.keys(data);
+  const cust = data[lifecycleCustomer] || data[names[0]];
+  const custListHtml = names.map(n=>`<div class="li ${lifecycleCustomer===n?'active':''}" onclick="setLifecycleCustomer('${n}')">${n}<span class="n">${data[n].count}</span></div>`).join('');
+  const chequeRows = cust.cheques.map(c=>`<tr><td>${c.no}</td><td class="num">&#8377;${c.amt}</td><td class="dim">${c.storage}</td><td><span class="chip ${c.chip}">${c.label}</span></td><td class="meta">${c.upd}</td><td class="meta">Custodian</td><td><button class="btn sm">Transfer</button></td></tr>`).join('');
+  const timelineHtml = cust.timeline.map(s=>`<div style="display:flex;gap:10px;margin-bottom:12px;"><div class="step ${s.done?'done':'now'}" style="flex:0;"><div class="dot">${s.done?'&#10003;':'&#8226;'}</div></div><div><b style="font-size:13px;">${s.label}</b><div style="font-size:12px;color:var(--text-dim);">${s.when}</div></div></div>`).join('');
+  const regRows = cust.reg.map(r=>`<tr><td>${r.no}</td><td><span class="chip ${r.dir}">${r.dirLabel}</span></td><td class="dim">${r.note}</td><td class="dim">${r.by}</td><td class="meta">${r.upd}</td></tr>`).join('');
+  return `
+  <div class="page-head"><div><h3>Cheque Lifecycle</h3><div class="desc">Customer-wise, drilled into cheque basis</div></div></div>
+  <div class="flow-note">Check-in / Check-out below logs <b>external</b> movement of the physical cheque &ndash; received from the customer, sent out for bank presentation, or returned to the customer. Movement between your <b>own internal</b> branches/departments is a different action &mdash; see <b>Cheque Transfers</b>.</div>
+  <div class="two-col" style="grid-template-columns:200px 1fr;">
+    <div class="card">
+      <div class="card-head"><h4>Customers</h4></div>
+      <div class="side-list">${custListHtml}</div>
+    </div>
+    <div>
+      <div class="card">
+        <div class="card-head"><h4>${lifecycleCustomer} &mdash; Cheques</h4><span class="hint">${cust.count} total</span></div>
+        <table>
+          <tr><th>Cheque</th><th class="num">Amount</th><th>Storage</th><th>Status</th><th>Updated</th><th>Updated By</th><th></th></tr>
+          ${chequeRows}
+        </table>
+      </div>
+      <div class="card">
+        <div class="card-head"><h4>${cust.timelineChq} &mdash; Timeline</h4></div>
+        ${timelineHtml}
+      </div>
+      <div class="card">
+        <div class="card-head"><h4>Check-in / Check-out Register &mdash; Inward / Outward</h4><span class="hint">External movement only</span></div>
+        <table>
+          <tr><th>Cheque</th><th>Direction</th><th>Counterparty</th><th>Logged By</th><th>Updated</th></tr>
+          ${regRows}
+        </table>
+        <div style="margin-top:10px;"><button class="btn sm">+ Log Check-in / Check-out</button></div>
+      </div>
+    </div>
+  </div>`;
+},
+
+transfer: ()=>{
+  const active = subTab.transfer;
+  const custody = `
+  <div class="flow-note amber">Custody Transfer moves where a cheque physically sits (e.g. FRFC Mumbai &rarr; Branch Pune). It's auto-logged into Cheque Lifecycle and needs no approval &mdash; the workflow owner doesn't change.</div>
+  <div class="card">
+    <div class="card-head"><h4>Custody Transfer Log</h4></div>
+    <table>
+      <tr><th>Cheque</th><th>From</th><th>To</th><th>Initiated By</th><th>Status</th><th>Updated</th></tr>
+      <tr><td>#004790</td><td class="dim">FRFC &middot; Mumbai</td><td class="dim">Branch &middot; Pune</td><td class="dim">Custodian, Mumbai</td><td><span class="chip success">Completed</span></td><td class="meta">2 hr ago</td></tr>
+      <tr><td>#004655</td><td class="dim">Branch &middot; Ahmedabad</td><td class="dim">FRFC &middot; Mumbai</td><td class="dim">Custodian, Ahmedabad</td><td><span class="chip warning">In Transit</span></td><td class="meta">1 day ago</td></tr>
+    </table>
+  </div>`;
+  const ownership = `
+  <div class="flow-note purple">Ownership Transfer re-routes the cheque's maker-checker workflow to a different branch/department &mdash; the receiving side's Checker must approve before they take ownership.</div>
+  <div class="card">
+    <div class="card-head"><h4>Ownership Transfer Requests</h4><span class="hint">1 selected</span></div>
+    <div class="tag-row" style="margin-bottom:10px;"><button class="btn sm primary">Bunch Approve (1)</button><button class="btn sm danger">Bunch Reject</button></div>
+    <table>
+      <tr><th class="select-col"></th><th>Cheque</th><th>From</th><th>To</th><th>Requested By</th><th>Status</th><th>Updated</th><th>Actions</th></tr>
+      <tr style="background:var(--card2)">
+        <td>&#9745;</td><td>#004918</td><td class="dim">Mumbai HO Ops</td><td class="dim">Pune Branch Ops</td><td class="dim">A. Rao</td><td><span class="chip warning">Pending Approval</span></td><td class="meta">40 min ago</td>
+        <td><div class="row-actions"><button class="btn xs">View</button><button class="btn xs primary">Approve</button><button class="btn xs danger">Reject</button></div></td>
+      </tr>
+      <tr>
+        <td>&#9744;</td><td>#004602</td><td class="dim">Corporate Risk</td><td class="dim">Mumbai HO Ops</td><td class="dim">S. Deshmukh</td><td><span class="chip success">Approved</span></td><td class="meta">2 days ago</td>
+        <td><div class="row-actions"><button class="btn xs">View</button></div></td>
+      </tr>
+    </table>
+  </div>`;
+  return `
+  <div class="page-head"><div><div class="breadcrumb">Transaction Flow</div><h3>Cheque Transfers</h3><div class="desc">Move a cheque between branches or departments</div></div>
+    <button class="btn primary">+ New Transfer</button></div>
+  <div class="tab-row"><div class="tab ${active==='custody'?'active':''}" onclick="setSubTab('transfer','custody')">Custody Transfer</div><div class="tab ${active==='ownership'?'active':''}" onclick="setSubTab('transfer','ownership')">Ownership Transfer</div></div>
+  <div class="flow-note">This module covers movement between your own <b>internal</b> branches/departments only. External inward/outward movement (e.g. presentation to the paying bank, return to the customer) is logged separately at <b>Cheque Lifecycle &rsaquo; Check-in / Check-out</b>.</div>
+  ${active==='ownership' ? ownership : custody}`;
+},
+
+analytics: ()=>`
+  <div class="page-head"><div><h3>Analytics &amp; Reports</h3><div class="desc">Portfolio view &middot; exportable</div></div><button class="btn sm">Export</button></div>
+  <div class="two-col">
+    <div class="card">
+      <div class="card-head"><h4>Status Mix</h4></div>
+      <table>
+        <tr><td><span class="chip success">Registered</span></td><td class="num">1,204</td></tr>
+        <tr><td><span class="chip warning">Pending Approval</span></td><td class="num">59</td></tr>
+        <tr><td><span class="chip critical">Rejected / Returned</span></td><td class="num">33</td></tr>
+        <tr><td><span class="chip neutral">Surrendered</span></td><td class="num">18</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <div class="card-head"><h4>Volume Trend &mdash; 6 months</h4></div>
+      <div class="bar-chart">${[40,55,48,66,72,90].map((v,i)=>`<div class="col"><div class="b" style="height:${v}%"></div><div class="glabel">${['Feb','Mar','Apr','May','Jun','Jul'][i]}</div></div>`).join('')}</div>
+    </div>
+  </div>
+  <div class="card" style="margin-top:12px;">
+    <div class="card-head"><h4>Top Branches by Volume</h4></div>
+    <table><tr><th>Branch</th><th class="num">Registered</th><th class="num">Avg. Turnaround</th></tr>
+      <tr><td>Mumbai HO</td><td class="num">412</td><td class="num">6.2 hrs</td></tr>
+      <tr><td>Pune</td><td class="num">288</td><td class="num">7.8 hrs</td></tr>
+      <tr><td>Ahmedabad</td><td class="num">201</td><td class="num">5.4 hrs</td></tr>
+    </table>
+  </div>
+  <div class="card" style="margin-top:12px;">
+    <div class="card-head"><h4>Reports</h4><span class="hint">Generate, schedule, or export</span></div>
+    <table>
+      <tr><th>Report</th><th>Last Generated</th><th></th></tr>
+      <tr><td>Daily Registration Report</td><td class="dim">09 Jul, 06:00</td><td><button class="btn sm">Generate</button></td></tr>
+      <tr><td>Checker Turnaround Report</td><td class="dim">08 Jul, 18:00</td><td><button class="btn sm">Generate</button></td></tr>
+      <tr><td>Aging &amp; Stale Cheque Report</td><td class="dim">08 Jul, 06:00</td><td><button class="btn sm">Generate</button></td></tr>
+      <tr><td>Branch-wise MIS</td><td class="dim">07 Jul, 06:00</td><td><button class="btn sm">Generate</button></td></tr>
+      <tr><td>Cheque Transfer Audit Report</td><td class="dim">07 Jul, 06:00</td><td><button class="btn sm">Generate</button></td></tr>
+      <tr><td>Fraud Incidents Report</td><td class="dim">06 Jul, 09:00</td><td><button class="btn sm">Generate</button></td></tr>
+    </table>
+  </div>`,
+
+masters: ()=>{
+  const embedded = deploymentMode==='embedded';
+  const MASTERS = {
+    bank: {label:'Bank Master', count:42, local:false, cols:['Bank Code','Bank Name','Status'], rows:[
+      ['HDFC','HDFC Bank Ltd.','<span class="chip success">Active</span>'],
+      ['ICIC','ICICI Bank Ltd.','<span class="chip success">Active</span>'],
+      ['SBIN','State Bank of India','<span class="chip success">Active</span>'],
+    ]},
+    branch: {label:'Branch Master', count:318, local:false, cols:['Branch Code','Branch Name','City','Status'], rows:[
+      ['MUM001','Mumbai Fort','Mumbai','<span class="chip success">Active</span>'],
+      ['PUN014','Pune Camp','Pune','<span class="chip success">Active</span>'],
+      ['AMD007','Ahmedabad Navrangpura','Ahmedabad','<span class="chip success">Active</span>'],
+    ]},
+    ifsc: {label:'IFSC Code Master', count:318, local:false, cols:['IFSC Code','Bank','Branch'], rows:[
+      ['HDFC0001234','HDFC Bank Ltd.','Mumbai Fort'],
+      ['ICIC0000456','ICICI Bank Ltd.','Pune Camp'],
+      ['SBIN0002211','State Bank of India','Andheri East'],
+    ]},
+    micr: {label:'MICR Code Master', count:290, local:false, cols:['MICR Code','Bank','City'], rows:[
+      ['400240002','HDFC Bank Ltd.','Mumbai'],
+      ['411229003','ICICI Bank Ltd.','Pune'],
+      ['380002007','State Bank of India','Ahmedabad'],
+    ]},
+    entity: {label:'Entity Master', count:6, local:false, cols:['Entity Code','Entity Name','Status'], rows:[
+      ['SPFL','Shapoorji Pallonji Finance Pvt. Ltd.','<span class="chip success">Active</span>'],
+      ['ANCH01','Anchor Corp Partner','<span class="chip success">Active</span>'],
+    ]},
+    chequetype: {label:'Cheque Type Master', count:7, local:true, cols:['Type Code','Description','Status'], rows:[
+      ['SD','Security Deposit','<span class="chip success">Active</span>'],
+      ['PDC','Post-Dated Cheque','<span class="chip success">Active</span>'],
+      ['UDC','Undated Cheque','<span class="chip success">Active</span>'],
+      ['NACH','National Automated Clearing House','<span class="chip success">Active</span>'],
+    ]},
+    depositor: {label:'Depositor Master', count:154, local:true, cols:['Depositor','Type','Status'], rows:[
+      ['Anand Constructions','Borrower','<span class="chip success">Active</span>'],
+      ['R. Anand','Security Provider','<span class="chip success">Active</span>'],
+      ['SPFL Anchor Program','Anchor','<span class="chip success">Active</span>'],
+    ]},
+    loantype: {label:'Loan Type Master', count:11, local:false, cols:['Loan Type','Description','Status'], rows:[
+      ['Construction Finance','Term loan for construction projects','<span class="chip success">Active</span>'],
+      ['Supply Chain Finance','Anchor-backed vendor financing','<span class="chip success">Active</span>'],
+    ]},
+  };
+  const active = MASTERS[subTab.masters] ? subTab.masters : 'bank';
+  const m = MASTERS[active];
+  const listHtml = Object.keys(MASTERS).map(k=>{
+    const mm = MASTERS[k];
+    const tag = (embedded && mm.local) ? `<span class="chip redact" style="margin-left:4px;">Local</span>` : `<span class="n">${mm.count}</span>`;
+    return `<div class="li ${active===k?'active':''}" onclick="setSubTab('masters','${k}')">${mm.label}${tag}</div>`;
+  }).join('');
+  const rowsHtml = m.rows.map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('');
+  const headHint = embedded
+    ? (m.local ? `Local &mdash; not synced from host` : `Source: Host LMS &middot; last synced 2 min ago`)
+    : `Bulk import supported`;
+  return `
+  <div class="page-head"><div><h3>Masters</h3><div class="desc">${embedded ? 'Synced read-only mirror &mdash; owned by the Host system in Embedded mode' : 'Front-end creatable &mdash; no code changes needed to onboard new data'}</div></div>${embedded ? `<button class="btn sm">&#8635; Sync Now</button>` : `<button class="btn primary sm">+ New Entry</button>`}</div>
+  ${embedded ? `<div class="flow-note purple">Bank, Branch, IFSC, MICR, Entity, and Loan Type masters are fetched from the Host system so there's exactly one source of truth. Depositor and Cheque Type stay local &mdash; they're cheque-specific, not something a Loan Management System would define.</div>` : ''}
+  <div class="two-col" style="grid-template-columns:210px 1fr;">
+    <div class="card">
+      <div class="side-list">${listHtml}</div>
+    </div>
+    <div class="card">
+      <div class="card-head"><h4>${m.label}</h4><span class="hint">${headHint}</span></div>
+      <table>
+        <tr>${m.cols.map(c=>`<th>${c}</th>`).join('')}${embedded?'':'<th>Updated</th><th>Updated By</th>'}</tr>
+        ${embedded ? rowsHtml : m.rows.map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join('')}<td class="meta">2 mo ago</td><td class="meta">R. Kapoor</td></tr>`).join('')}
+      </table>
+    </div>
+  </div>`;
+},
+
+users: ()=> deploymentMode==='embedded' ? `
+  <div class="page-head"><div><h3>Users &amp; Roles</h3><div class="desc">Identity comes from the Host system's SSO in Embedded mode &mdash; this screen maps it, it doesn't store it</div></div>
+    <button class="btn sm">+ Add Role Mapping</button></div>
+  <div class="flow-note purple">No local user directory or passwords in Embedded mode. ChqFlow360 trusts the Host system's SSO and maps its groups/claims to the four ChqFlow roles below.</div>
+  <table>
+    <tr><th>Host IdP Group / Claim</th><th>Mapped ChqFlow Role</th><th>Users (via Host)</th></tr>
+    <tr><td class="dim">Ops-L1</td><td><span class="chip success">Maker</span></td><td class="num">18</td></tr>
+    <tr><td class="dim">Ops-L2-Approver</td><td><span class="chip success">Checker</span></td><td class="num">6</td></tr>
+    <tr><td class="dim">IT-Admin</td><td><span class="chip success">Admin</span></td><td class="num">2</td></tr>
+    <tr><td class="dim">Internal-Audit</td><td><span class="chip success">Auditor</span></td><td class="num">3</td></tr>
+  </table>` : `
+  <div class="page-head"><div><h3>Users &amp; Roles</h3><div class="desc">Pilot workspace &middot; 24 users</div></div>
+    <div class="head-actions"><button class="btn sm">+ Create Custom Role</button><button class="btn primary sm">+ Invite User</button></div></div>
+  <table>
+    <tr><th>User</th><th>Role</th><th>Branch</th><th>Status</th><th>Updated</th><th>Updated By</th></tr>
+    <tr><td>A. Rao</td><td class="dim">Maker</td><td class="dim">Mumbai HO</td><td><span class="chip success">Active</span></td><td class="meta">1 mo ago</td><td class="meta">R. Kapoor</td></tr>
+    <tr><td>P. Iyer</td><td class="dim">Checker</td><td class="dim">Mumbai HO</td><td><span class="chip success">Active</span></td><td class="meta">1 mo ago</td><td class="meta">R. Kapoor</td></tr>
+    <tr><td>R. Kapoor</td><td class="dim">Admin</td><td class="dim">Corporate</td><td><span class="chip success">Active</span></td><td class="meta">2 mo ago</td><td class="meta">System</td></tr>
+    <tr><td>S. Deshmukh</td><td class="dim">Auditor</td><td class="dim">Corporate</td><td><span class="chip neutral">Invited</span></td><td class="meta">3 days ago</td><td class="meta">R. Kapoor</td></tr>
+  </table>`,
+
+workflow: ()=>`
+  <div class="page-head"><div><h3>Workflow Configuration</h3><div class="desc">Workspace: <b style="color:var(--text)">Workspace A (Dummy)</b></div></div><button class="btn sm">+ New Workflow</button></div>
+  <div class="card">
+    <div class="card-head"><h4>Cheque Registration Workflow</h4><span class="hint">Drag to reorder &middot; toggle stages on/off</span></div>
+    <div class="steps">
+      <div class="step done"><div class="dot">&#10003;</div><div class="label">Capture &amp; Review</div></div><div class="bar"></div>
+      <div class="step done"><div class="dot">&#10003;</div><div class="label">Verification Desk</div></div><div class="bar"></div>
+      <div class="step"><div class="dot">+</div><div class="label">Add Stage&hellip;</div></div>
+    </div>
+    <table>
+      <tr><td>Maker Review</td><td class="dim">Required</td><td><span class="chip success">Enabled</span></td></tr>
+      <tr><td>Dual Checker (4-eyes)</td><td class="dim">Optional, above &#8377;5,00,000</td><td><span class="chip neutral">Disabled</span></td></tr>
+      <tr><td>Signature-match hold</td><td class="dim">Auto-escalate below 85% confidence</td><td><span class="chip success">Enabled</span></td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <div class="card-head"><h4>Approval Levels</h4><span class="hint">New &mdash; dynamic checker count, per your feedback</span></div>
+    <div class="field" style="max-width:280px;margin-bottom:10px;"><label>Number of Checker Levels</label><div class="select">2 &mdash; Checker, then Senior Checker</div></div>
+    <div class="flow-note amber" style="margin-bottom:0;">This sets how many checker levels a cheque passes through. Region-wise and limit-wise routing (e.g. auto-assign by branch region or sanction amount) and a full drag-and-drop custom-role builder are planned for Phase 2, after the pilot is live.</div>
+  </div>
+  <div class="card">
+    <div class="card-head"><h4>Role Permissions</h4><span class="hint">Basic version &mdash; full RBAC builder is Phase 2</span></div>
+    <table>
+      <tr><th>Role</th><th>Create</th><th>Approve</th><th>Reject</th><th>View All</th></tr>
+      <tr><td>Maker</td><td><span class="chip success">On</span></td><td><span class="chip neutral">Off</span></td><td><span class="chip neutral">Off</span></td><td><span class="chip neutral">Off</span></td></tr>
+      <tr><td>Checker</td><td><span class="chip neutral">Off</span></td><td><span class="chip success">On</span></td><td><span class="chip success">On</span></td><td><span class="chip neutral">Off</span></td></tr>
+      <tr><td>Admin</td><td><span class="chip success">On</span></td><td><span class="chip success">On</span></td><td><span class="chip success">On</span></td><td><span class="chip success">On</span></td></tr>
+      <tr><td>Auditor</td><td><span class="chip neutral">Off</span></td><td><span class="chip neutral">Off</span></td><td><span class="chip neutral">Off</span></td><td><span class="chip success">On</span></td></tr>
+    </table>
+  </div>`,
+
+audit: ()=>{
+  const rows = [
+    {ts:'09 Jul 09:14', user:'P. Iyer', action:'Approved #004921', module:'Verification Desk'},
+    {ts:'09 Jul 08:52', user:'A. Rao', action:'Submitted #004921', module:'Capture & Review'},
+    {ts:'09 Jul 08:10', user:'RedactAI', action:'Redacted Aadhaar on upload (LN-2026-08813)', module:'Loan & Signatory Mapping'},
+    {ts:'08 Jul 17:10', user:'R. Kapoor', action:'Added Bank Master &ldquo;IDFB&rdquo;', module:'Masters'},
+    {ts:'08 Jul 16:02', user:'P. Iyer', action:'Rejected #004801 &mdash; &ldquo;Amount mismatch&rdquo;', module:'Verification Desk'},
+    {ts:'07 Jul 11:20', user:'Custodian, Mumbai', action:'Custody transfer #004790 &rarr; Branch Pune', module:'Transfers'},
+  ];
+  const tabs = ['All Modules','Capture & Review','Verification Desk','Transfers','Masters'];
+  const active = subTab.audit;
+  const filtered = active==='all' ? rows : rows.filter(r=>r.module===active);
+  const tabHtml = tabs.map(t=>{
+    const key = t==='All Modules' ? 'all' : t;
+    return `<div class="tab ${active===key?'active':''}" onclick="setSubTab('audit','${key}')">${t.replace('&','&amp;')}</div>`;
+  }).join('');
+  const rowsHtml = filtered.length ? filtered.map(r=>`<tr><td class="dim num">${r.ts}</td><td>${r.user}</td><td>${r.action}</td><td class="dim">${r.module.replace('&','&amp;')}</td></tr>`).join('') : `<tr><td colspan="4"><div class="empty">No entries for this module yet.</div></td></tr>`;
+  return `
+  <div class="page-head"><div><h3>Audit Logs</h3><div class="desc">Immutable record &middot; filterable by module, user, date</div></div><button class="btn sm">Export</button></div>
+  <div class="tab-row">${tabHtml}</div>
+  <table>
+    <tr><th>Timestamp</th><th>User</th><th>Action</th><th>Module</th></tr>
+    ${rowsHtml}
+  </table>`;
+},
+
+agents: ()=>{
+  const AGENTS = {
+    plan: {icon:'&#129517;', name:'Planner', status:'neutral', statusText:'Active', desc:'Runs first on <b>every</b> item, no exceptions &mdash; it is the dispatcher at the front of the pipeline, not an optional or occasional step. It looks at what was uploaded (a cheque vs. a KYC document) and decides the execution plan: which agents run, in what order, and whether RedactAI needs to be kicked off in parallel alongside the main pipeline.',
+      stats:[['Items routed today','412'],['Avg. planning time','0.1s'],['Parallel dispatches to RedactAI','58']],
+      recent:['Chq #000145 &mdash; standard plan: OCR &rarr; Validation &rarr; Signature-Match &rarr; Fraud','KYC doc for Nova Infra LLP &mdash; dispatched to RedactAI in parallel with the main pipeline','Chq #000152 &mdash; high opening amount, added Escalation Review to the plan up front'],
+      evals:{applicable:false, note:'A lightweight rule-based router in this prototype, not a trained model &mdash; there is no accuracy score to evaluate. It is here to illustrate where a real planning agent would sit ahead of the pipeline.'}},
+    ocr: {icon:'&#129302;', name:'OCR Agent', status:'success', statusText:'Active', desc:'Reads printed cheque fields &mdash; bank, amount, date &mdash; from the uploaded image using a local OCR model. Low-confidence fields are looped back through the Consistency Check reflection step before handing off to Validation.',
+      stats:[['Reads today','391'],['Avg. confidence','91.3%'],['Avg. time / cheque','1.8s']],
+      recent:['Chq #000145 &mdash; amount read as &#8377;12,50,000 at 96% confidence','Chq #000148 &mdash; date read as 12/07/2026 at 88% confidence','Chq #000151 &mdash; low-confidence read (61%), sent to Consistency Check'],
+      evals:{accuracy:'91.3%', sample:'120 hand-labelled cheque images', lastRun:'Today, 06:00', note:'Benchmarked weekly against a labelled set; handwritten fields remain the main source of error &mdash; a known limit of general-purpose OCR, not this prototype.'}},
+    consistency: {icon:'&#128260;', name:'Consistency Check', status:'warning', statusText:'Reflecting', category:'reflect', desc:'A reflection loop on the OCR Agent &mdash; re-reads any field below a confidence threshold and cross-checks amount-in-figures against amount-in-words before the record is allowed to move downstream.',
+      stats:[['Re-reads triggered today','23'],['Corrections made','9'],['Avg. loops / cheque','1.2']],
+      recent:['Chq #000151 &mdash; amount re-read after 61% confidence, corrected to 96%','Chq #000148 &mdash; words / figures cross-check passed on first pass','Chq #000155 &mdash; 2 reflection loops before OCR output was accepted'],
+      evals:{accuracy:'+7.4pp accuracy uplift vs. single-pass OCR', sample:'120 hand-labelled cheque images', lastRun:'Today, 06:00', note:'The one place in this prototype where a reflection loop measurably changes the eval score &mdash; compares OCR accuracy with vs. without the retry.'}},
+    validate: {icon:'&#129504;', name:'Validation Agent', status:'success', statusText:'Running', desc:'Runs hygiene checks &mdash; amount-in-words vs. figures, post-dated / stale date checks, signed status &mdash; on every OCR output before it reaches a human.',
+      stats:[['Checks run today','402'],['Pass rate','87%'],['Avg. time / cheque','0.3s']],
+      recent:['Chq #000146 &mdash; amount-in-words / figures mismatch flagged','Chq #000148 &mdash; passed all checks, forwarded to Signature-Match','Chq #000150 &mdash; flagged post-dated, 14 days forward'],
+      evals:{accuracy:'99.1%', sample:'402 rule evaluations today', lastRun:'Continuous', note:'This is deterministic rule logic, not a trained model &mdash; it is evaluated against known-good / known-bad cases in the Test Console rather than a statistical accuracy score.'}},
+    match: {icon:'&#128271;', name:'Signature-Match Agent', status:'success', statusText:'Active', desc:'Compares the cheque signature against the KYC specimen on file and returns a match score, used for both checker review and Straight-Through Processing eligibility.',
+      stats:[['Matches today','214'],['Avg. score','88%'],['STP-eligible today','34']],
+      recent:['Chq #000145 &mdash; 96% match, above STP threshold','Chq #000146 &mdash; 79% match, routed to checker','Chq #000149 &mdash; 91% match, above STP threshold'],
+      evals:{accuracy:'Simulated (~85%)', sample:'&mdash;', lastRun:'&mdash;', note:'Signature-match scores are simulated in this prototype &mdash; seeded per test case, not a real biometric model &mdash; so no live evaluation is possible yet.'}},
+    fraud: {icon:'&#128737;', name:'Fraud Agent', status:'warning', statusText:'Monitoring', desc:'Flags duplicate cheque numbers and anomalous patterns &mdash; unusual amount, rapid resubmission &mdash; for manual review. A score above the escalation threshold routes the cheque straight to Escalation Review instead of the normal Verification Desk queue.',
+      stats:[['Open flags','4'],['Duplicates caught (month)','11'],['False-positive rate','6%']],
+      recent:['Chq #000155 &mdash; duplicate of a previously registered number, fraud score 91','Chq #000152 &mdash; amount 4x customer average, fraud score 74','Chq #000149 &mdash; cleared, no anomaly detected'],
+      evals:{accuracy:'94%', sample:'180 labelled duplicate / clean cases', lastRun:'This week', note:'Evaluated against a labelled set of known duplicate and known-clean cheques.'}},
+    escalate: {icon:'&#128680;', name:'Escalation Review', status:'critical', statusText:'Standby', category:'reflect', desc:'A routing decision on the Fraud Agent\'s output &mdash; any cheque whose fraud score crosses the escalation threshold is routed to a senior reviewer instead of the normal Verification Desk queue.',
+      stats:[['Escalated today','2'],['Escalation threshold','score &ge; 80'],['Avg. score, escalated cases','87']],
+      recent:['Chq #000155 &mdash; fraud score 91, routed to senior reviewer','Chq #000152 &mdash; fraud score 74, stayed in normal Verification queue','Chq #000149 &mdash; fraud score 12, no escalation'],
+      evals:{applicable:false, note:'A threshold-based routing rule, not a model &mdash; there is no accuracy score to evaluate. The thing worth tracking instead is whether the threshold is well-calibrated: how often an escalated case turns out to be genuine fraud.'}},
+    redact: {icon:'&#128274;', name:'RedactAI', status:'success', statusText:'Active', category:'plan', desc:'Masks Aadhaar and bank account numbers the instant a KYC document is uploaded, per RBI norms. Dispatched by the Planner in parallel to the main pipeline &mdash; on KYC uploads, not the cheque itself.',
+      stats:[['Documents processed','58'],['Fields redacted','132'],['Coverage','100%']],
+      recent:['KYC doc for Anand Constructions &mdash; Aadhaar masked','KYC doc for Nova Infra LLP &mdash; 2 account numbers masked','KYC doc for Verve Realty &mdash; Aadhaar + account masked'],
+      evals:{accuracy:'100% on known Aadhaar / account patterns', sample:'58 documents', lastRun:'Today', note:'Pattern-based, not a trained model &mdash; evaluated for false negatives (a number that should have been masked but wasn&rsquo;t), not classification accuracy.'}},
+    mapping: {icon:'&#128196;', name:'Mapping Agent', status:'success', statusText:'Healthy', desc:'Associates each cheque with the correct loan and signatory; falls back to manual assignment when no confident match is found.',
+      stats:[['Auto-mapped today','46'],['Manual fallback','3'],['Avg. confidence','92%']],
+      recent:['Chq #000145 &mdash; mapped to LN-2026-08813, Anand Constructions','Chq #000150 &mdash; low confidence, sent to manual queue','Chq #000148 &mdash; mapped to LN-2026-07742, Global Steel Ltd.'],
+      evals:{accuracy:'92%', sample:'49 mappings today', lastRun:'Today', note:'Confidence is scored against the loan/signatory record it ultimately settles on; the 3 manual fallbacks today were all correctly deferred, not missed matches.'}},
+    notify: {icon:'&#128276;', name:'Notification Agent', status:'success', statusText:'Active', desc:'Generates in-app and email alerts for due presentations, stale cheques, rejections, and signature / fraud flags.',
+      stats:[['Alerts today','18'],['Delivery success','100%'],['Channels','In-app + Email']],
+      recent:['Chq #004790 &mdash; "Due Soon" alert sent, 2 days to presentation','Chq #004821 &mdash; "Expired" alert sent, 3 days overdue','Chq #004833 &mdash; signature mismatch alert sent to checker'],
+      evals:{applicable:false, note:'Deterministic rule triggers, not a predictive model &mdash; there is nothing here to score against ground truth, so no eval applies.'}},
+    analytics: {icon:'&#128202;', name:'Analytics Agent', status:'info', statusText:'Learning', desc:'Builds trend baselines from registered cheque volume, aging, and rejection patterns to power the Dashboard\'s insights.',
+      stats:[['Data points tracked','1,204'],['Baseline maturity','62%'],['Trends published','5']],
+      recent:['Rejection-rate trend updated &mdash; 3-day rolling average','Volume-by-branch baseline recalculated','Aging-bucket distribution refreshed'],
+      evals:{applicable:false, note:'Still accumulating baseline data, and there is no ground truth to check a trend against &mdash; too early for a meaningful evaluation.'}},
+  };
+  const active = AGENTS[subTab.agents] ? subTab.agents : 'ocr';
+  const a = AGENTS[active];
+  const node = (key, short)=>{
+    const cat = AGENTS[key].category ? ' '+AGENTS[key].category : '';
+    return `<div class="agent-node${cat}${active===key?' active':''}" onclick="setSubTab('agents','${key}')"><span class="ic">${AGENTS[key].icon}</span>${short}</div>`;
+  };
+  return `
+  <div class="page-head"><div><h3>AI Agents</h3><div class="desc">Illustrative dependency map &mdash; click any agent to see its live status, recent activity, and evals</div></div></div>
+  <div class="card">
+    <div class="card-head"><h4>Agent Pipeline</h4><span class="hint">How a cheque actually flows through the agents, in order</span></div>
+    <div class="agent-flow">
+      ${node('plan','Planner')}<span class="agent-arrow">&rarr;</span>${node('ocr','OCR')}<span class="agent-arrow">&rarr;</span>${node('validate','Validation')}<span class="agent-arrow">&rarr;</span>${node('match','Signature-Match')}<span class="agent-arrow">&rarr;</span>${node('fraud','Fraud')}<span class="agent-arrow">&rarr;</span>${node('mapping','Mapping')}<span class="agent-arrow">&rarr;</span>${node('notify','Notification')}<span class="agent-arrow">&rarr;</span>${node('analytics','Analytics')}
+    </div>
+    <div class="agent-branch">
+      <span class="agent-branch-label">&#8617; the Planner's one parallel dispatch &mdash; runs alongside the main pipeline, only when a KYC document is uploaded:</span>
+      ${node('redact','RedactAI')}
+    </div>
+    <div class="agent-branch">
+      <span class="agent-branch-label">&#8635; reflection loop on OCR &mdash; re-reads low-confidence fields before handing off downstream:</span>
+      ${node('consistency','Consistency Check')}
+    </div>
+    <div class="agent-branch">
+      <span class="agent-branch-label">&#8618; routing decision at Fraud &mdash; escalates when the fraud score crosses the threshold:</span>
+      ${node('escalate','Escalation Review')}
+    </div>
+    <div class="agent-pattern-legend">
+      <span><span class="dot" style="background:var(--primary);"></span>Core pipeline &mdash; runs in sequence, every time (Planner included)</span>
+      <span><span class="dot" style="background:#C2410C;"></span>Reflection / routing &mdash; a self-check or a conditional detour off the main line</span>
+      <span><span class="dot" style="background:var(--text-muted);"></span>Runs in parallel &mdash; off to the side, only when triggered</span>
+    </div>
+  </div>
+  <div class="card" style="margin-top:12px;border-left:4px solid var(--primary);">
+    <div class="card-head"><h4>${a.icon} ${a.name}<span class="chip ${a.status}" style="margin-left:8px;">${a.statusText}</span></h4></div>
+    <div style="font-size:12.5px;color:var(--text-dim);line-height:1.6;margin-bottom:12px;">${a.desc}</div>
+    <div class="agent-status-grid" style="margin-bottom:12px;">
+      ${a.stats.map(([label,val])=>`<div class="agent-tile" style="border-left-color:var(--primary);text-align:center;"><div class="meta" style="margin-top:0;">${label}</div><div style="font-size:19.5px;font-weight:800;margin-top:4px;">${val}</div></div>`).join('')}
+    </div>
+    <div class="card-head" style="margin-top:4px;"><h4 style="font-size:12.5px;">Recent Activity</h4></div>
+    <table>
+      ${a.recent.map(r=>`<tr><td class="dim">${r}</td></tr>`).join('')}
+    </table>
+    <div class="evals-box">
+      <div class="evals-title">Evals &mdash; is this agent's output actually good?</div>
+      ${a.evals.applicable===false ? `
+      <div class="evals-na"><b>Not applicable to this agent.</b> ${a.evals.note}</div>
+      ` : `
+      <div class="evals-stats">
+        <div><b>${a.evals.accuracy}</b>Accuracy / quality</div>
+        <div><b>${a.evals.sample}</b>Evaluated against</div>
+        <div><b>${a.evals.lastRun}</b>Last run</div>
+      </div>
+      <div class="evals-note">${a.evals.note}</div>
+      `}
+    </div>
+  </div>`;
+},
+
+settings: ()=>`
+  <div class="page-head"><div><h3>Settings</h3><div class="desc">Master-level controls &mdash; changes here apply system-wide, instantly</div></div></div>
+  <div class="two-col">
+    <div class="card">
+      <div class="card-head"><h4>Appearance</h4></div>
+      <div class="field" style="margin-bottom:10px;"><label>Theme</label><div style="display:flex;gap:8px;"><button class="btn primary sm">Dark (default)</button><button class="btn sm">Light</button></div></div>
+      <div class="field" style="margin-bottom:10px;"><label>Accent</label><div style="display:flex;gap:6px;"><div style="width:22px;height:22px;border-radius:5px;background:#2563EB;border:2px solid var(--text)"></div><div style="width:22px;height:22px;border-radius:5px;background:#F59E0B;"></div></div></div>
+      <div class="field"><label>Font</label><div class="input">Aptos (Bierstadt) &middot; 12pt &middot; applies to all modules</div></div>
+    </div>
+    <div class="card">
+      <div class="card-head"><h4>Tenant Branding</h4></div>
+      <table>
+        <tr><td class="dim">Workspace Name</td><td>Workspace A (Dummy)</td></tr>
+        <tr><td class="dim">Product</td><td>ChqFlow360</td></tr>
+        <tr><td class="dim">Data residency</td><td>Local workstation only</td></tr>
+      </table>
+    </div>
+  </div>
+  <div class="card" style="margin-top:12px;">
+    <div class="card-head"><h4>Capture &amp; Upload Guardrails</h4><span class="hint">New &mdash; Admin decides what's allowed, per workspace</span></div>
+    <table>
+      <tr><th>Source</th><th>Desktop</th><th>Mobile</th></tr>
+      <tr><td>Scanner</td><td><span class="chip success">Allowed</span></td><td class="dim">N/A</td></tr>
+      <tr><td>Camera capture</td><td class="dim">N/A</td><td><span class="chip success">Allowed</span></td></tr>
+      <tr><td>Upload from device / local drive</td><td><span class="chip success">Allowed</span></td><td><span class="chip neutral">Admin choice</span></td></tr>
+      <tr><td>Photo gallery</td><td class="dim">N/A</td><td><span class="chip neutral">Off &mdash; Admin may enable</span></td></tr>
+    </table>
+    <div class="form-grid" style="margin-top:12px;">
+      <div class="field"><label>Max File Size</label><div class="input">25 MB</div></div>
+      <div class="field"><label>Allowed Formats</label><div class="input">PDF, JPG, JPEG, PNG, TIFF</div></div>
+    </div>
+  </div>
+  <div class="card" style="margin-top:12px;">
+    <div class="card-head"><h4>Straight-Through Processing (STP)</h4><span class="hint">Real setting &mdash; skip the checker for high-confidence cheques</span></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;padding:10px 0;border-bottom:1px solid var(--border);">
+      <div>
+        <div style="font-weight:700;font-size:13.5px;">Enable Straight-Through Processing</div>
+        <div style="font-size:12px;color:var(--text-dim);margin-top:3px;max-width:440px;">When on, a cheque that clears every hygiene check, isn't a duplicate, and meets the signature-match threshold below is registered automatically &mdash; it never enters the Verification Desk queue. Off by default; each workspace's Admin opts in.</div>
+      </div>
+      <div class="switch ${stpEnabled?'on':''}" onclick="toggleStp()"><div class="knob"></div></div>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;padding:10px 0;">
+      <div>
+        <div style="font-weight:700;font-size:13.5px;">Signature-Match Threshold</div>
+        <div style="font-size:12px;color:var(--text-dim);margin-top:3px;">Cheques below this score, or with any hygiene/fraud flag, always go to a human checker regardless of this setting. Each workspace's Admin sets its own threshold between 85% and 100%.</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <input type="range" min="85" max="100" step="1" value="${stpThreshold}" style="width:120px;accent-color:var(--primary);" oninput="document.getElementById('stpThreshVal').textContent=this.value+' %'" onchange="setStpThreshold(this.value)">
+        <span id="stpThreshVal" style="font-weight:700;font-size:13.5px;min-width:44px;text-align:right;">${stpThreshold} %</span>
+      </div>
+    </div>
+  </div>
+  <div class="card" style="margin-top:12px;">
+    <div class="card-head"><h4>Notification Preferences</h4><span class="hint">Notifications lives here, not as its own module</span></div>
+    <table>
+      <tr><th>Alert Type</th><th>In-app</th><th>Email</th><th>Threshold</th></tr>
+      <tr><td>Presentation Due</td><td><span class="chip success">On</span></td><td><span class="chip success">On</span></td><td class="dim">3 days before</td></tr>
+      <tr><td>Stale / Expired</td><td><span class="chip success">On</span></td><td><span class="chip success">On</span></td><td class="dim">Same day</td></tr>
+      <tr><td>Checker Rejected / Resubmitted</td><td><span class="chip success">On</span></td><td><span class="chip neutral">Off</span></td><td class="dim">Immediate</td></tr>
+      <tr><td>Signature / Fraud Flag</td><td><span class="chip success">On</span></td><td><span class="chip success">On</span></td><td class="dim">Immediate</td></tr>
+      <tr><td>Ownership Transfer Request</td><td><span class="chip success">On</span></td><td><span class="chip success">On</span></td><td class="dim">Immediate</td></tr>
+    </table>
+    <div class="card-head" style="margin-top:16px;"><h4>Recent Alerts</h4><span class="hint">Preview</span></div>
+    <table>
+      <tr><td><span class="chip critical">Expired</span></td><td>Chq #004821 crossed validity, 3 days overdue</td><td class="dim num">2h ago</td></tr>
+      <tr><td><span class="chip warning">Due Soon</span></td><td>Chq #004790 due for presentation in 2 days</td><td class="dim num">5h ago</td></tr>
+      <tr><td><span class="chip critical">Mismatch</span></td><td>Signature agent flagged #004833 for manual review</td><td class="dim num">6h ago</td></tr>
+    </table>
+  </div>`,
+
+integrations: ()=>`
+  <div class="page-head"><div><h3>Integrations &amp; Deployment Mode</h3><div class="desc">One product, two SKUs &mdash; this screen is the switch between them</div></div></div>
+  <div class="flow-note purple">This is new in V2, per management's feedback: ChqFlow360 ships as <b>one engine</b>. What changes between the Standalone and Embedded/Plug-in SKU is which data provider is active per domain &mdash; not the underlying product.</div>
+  <div class="card">
+    <div class="card-head"><h4>Deployment Mode</h4><span class="hint">Try the switch in the top bar &mdash; every screen updates live</span></div>
+    <div class="two-col">
+      <div class="card" style="border-color:${deploymentMode==='standalone'?'var(--primary)':'var(--border)'};">
+        <div class="card-head"><h4>&#9635; Standalone</h4>${deploymentMode==='standalone'?'<span class="chip success">Active</span>':''}</div>
+        <div style="font-size:12.5px;color:var(--text-dim);line-height:1.6;">ChqFlow360 owns every domain locally: its own Customer/Loan reference, Masters, Users, and login. Sold as a self-contained product to buyers with no core LMS.</div>
+      </div>
+      <div class="card" style="border-color:${deploymentMode==='embedded'?'var(--warning)':'var(--border)'};">
+        <div class="card-head"><h4>&#128268; Embedded (Plug-in / SDK)</h4>${deploymentMode==='embedded'?'<span class="chip warning">Active</span>':''}</div>
+        <div style="font-size:12.5px;color:var(--text-dim);line-height:1.6;">Customer, Loan, Masters, and Identity are fetched live from the host system. ChqFlow360 keeps only what's genuinely cheque-specific. Sold as a plug-in to buyers who already run an LMS.</div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-head"><h4>Per-Domain Data Provider</h4><span class="hint">Hybrid is possible &mdash; each row is independently switchable</span></div>
+    <table class="provider-table">
+      <tr><th>Domain</th><th>Owner in Standalone</th><th>Owner in Embedded</th><th>Active Now</th></tr>
+      <tr><td>Cheque image, OCR, AI verdicts, lifecycle</td><td class="local">ChqFlow360 (always)</td><td class="local">ChqFlow360 (always)</td><td><span class="chip success">Local</span></td></tr>
+      <tr><td>Customer / Borrower</td><td class="local">Local</td><td class="federated">Federated</td><td><span class="chip ${deploymentMode==='embedded'?'warning':'success'}">${deploymentMode==='embedded'?'Federated':'Local'}</span></td></tr>
+      <tr><td>Loan / Account</td><td class="local">Local (manual)</td><td class="federated">Federated</td><td><span class="chip ${deploymentMode==='embedded'?'warning':'success'}">${deploymentMode==='embedded'?'Federated':'Local'}</span></td></tr>
+      <tr><td>Signatory &amp; KYC</td><td class="local">Local</td><td class="federated">Federated</td><td><span class="chip ${deploymentMode==='embedded'?'warning':'success'}">${deploymentMode==='embedded'?'Federated':'Local'}</span></td></tr>
+      <tr><td>Bank / Branch / IFSC / MICR / Entity / Loan Type Masters</td><td class="local">Local</td><td class="federated">Federated</td><td><span class="chip ${deploymentMode==='embedded'?'warning':'success'}">${deploymentMode==='embedded'?'Federated':'Local'}</span></td></tr>
+      <tr><td>Cheque Type / Depositor Masters</td><td class="local">Local (always)</td><td class="local">Local (always)</td><td><span class="chip success">Local</span></td></tr>
+      <tr><td>Users / Identity</td><td class="local">Local</td><td class="federated">Federated (SSO)</td><td><span class="chip ${deploymentMode==='embedded'?'warning':'success'}">${deploymentMode==='embedded'?'Federated':'Local'}</span></td></tr>
+      <tr><td>Audit Log</td><td class="local">Local</td><td class="federated">Local + streamed to Host</td><td><span class="chip ${deploymentMode==='embedded'?'warning':'success'}">${deploymentMode==='embedded'?'Dual-write':'Local'}</span></td></tr>
+    </table>
+  </div>
+  <div class="two-col">
+    <div class="card">
+      <div class="card-head"><h4>Host System Connector</h4><span class="hint">${deploymentMode==='embedded'?'Connected':'Inactive in Standalone mode'}</span></div>
+      <table>
+        <tr><td class="dim">Host System</td><td>Loan Management System</td></tr>
+        <tr><td class="dim">Base URL</td><td>https://lms.internal.hostlms-example.com/api/v2</td></tr>
+        <tr><td class="dim">Auth</td><td>OAuth2 client credentials</td></tr>
+        <tr><td class="dim">Status</td><td>${deploymentMode==='embedded'?'<span class="chip success">Connected</span>':'<span class="chip neutral">Not active</span>'}</td></tr>
+        <tr><td class="dim">Last Sync</td><td class="dim">${deploymentMode==='embedded'?'2 minutes ago':'&mdash;'}</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <div class="card-head"><h4>SDK / API Surface</h4><span class="hint">What a host system calls or embeds</span></div>
+      <table>
+        <tr><th>Surface</th><th>Example</th></tr>
+        <tr><td class="dim">REST API</td><td>POST /cheques/register &middot; GET /cheques/{id}/status</td></tr>
+        <tr><td class="dim">Webhooks</td><td>cheque.approved &middot; cheque.rejected &middot; signature.mismatch_flagged</td></tr>
+        <tr><td class="dim">Embeddable widget</td><td>&lt;chqflow-capture loan-id customer-id&gt; (iframe/web component)</td></tr>
+      </table>
+      <div style="margin-top:10px;"><button class="btn sm">Manage API Keys</button></div>
+    </div>
+  </div>`,
+};
+
+const stage = document.getElementById('stage');
+let current = 'login';
+let deploymentMode = 'standalone';
+let subTab = { inbox:'all', capture:'scan', transfer:'custody', masters:'bank', audit:'all', agents:'ocr' };
+let lifecycleCustomer = 'Anand Constructions';
+let stpEnabled = false;
+let stpThreshold = 95;
+function setSubTab(screen, val){ subTab[screen]=val; render(); }
+function setLifecycleCustomer(name){ lifecycleCustomer=name; render(); }
+function toggleStp(){ stpEnabled = !stpEnabled; render(); }
+function setStpThreshold(v){ stpThreshold = Math.max(85, Math.min(100, Number(v)||95)); render(); }
+
+function shellChrome(activeKey, innerHtml){
+  const nav = SCREENS.filter(s=>s.group);
+  const groups = ["Transaction Flow","Administration"];
+  let navHtml = '';
+  groups.forEach(g=>{
+    navHtml += `<div class="nav-group-label">${g}</div>`;
+    nav.filter(n=>n.group===g).forEach(n=>{
+      navHtml += `<div class="nav-item${n.key===activeKey?' active':''}" onclick="go('${n.key}')"><span class="ico">${iconFor(n.key)}</span>${n.label.replace(/&amp;/g,'&')}</div>`;
+    });
+  });
+  const embedded = deploymentMode === 'embedded';
+  const embedBanner = embedded ? `<div class="embed-banner">&#128268; Embedded inside <b>Loan Management System</b> &middot; Context received: Customer &ldquo;Anand Constructions&rdquo; &middot; Loan LN-2026-08813 &middot; Identity via Host SSO</div>` : '';
+  return `<div class="app-shell light-theme" id="appShell">
+    <div class="app-topbar">
+      <div class="brand">ChqFlow360<span class="tenant">&nbsp;&middot; Workspace A</span></div>
+      <div class="top-workspace">Workspace A</div>
+      <div class="top-search">&#128269;&nbsp;Search cheques, customers...</div>
+      <div class="top-actions">
+        <div class="mode-toggle${embedded?' embedded':''}" id="modeToggle" title="Click to switch deployment mode"><span class="dot"></span>Mode: <b>${embedded?'Embedded (Plug-in)':'Standalone'}</b></div>
+        <div class="theme-toggle">Dark<div class="switch" id="themeSwitch"><div class="knob"></div></div>Light</div>
+        <div class="icon-btn">&#128276;<span class="badge-dot">6</span></div>
+        <div class="icon-btn" title="Sign out" onclick="go('login')">&#9211;</div>
+        <div class="avatar" title="Sign out" onclick="go('login')">AU</div>
+        <div class="user-meta"><div class="n">Admin User</div><div class="r">Administrator</div></div>
+      </div>
+    </div>
+    ${embedBanner}
+    <div class="app-body">
+      <div class="app-sidebar">
+        <div class="sidebar-logo"><div class="mark" style="font-size:16.5px;">ChqFlow360</div></div>
+        <div class="sidebar-scroll">${navHtml}</div>
+        <div class="sidebar-foot">Version 2.0.0 &middot; ${embedded?'Embedded SKU':'Standalone SKU'}</div>
+      </div>
+      <div class="app-main">${innerHtml}</div>
+    </div>
+  </div>`;
+}
+
+const KPI_LINK_MAP = [
+  [/Cheque Inbox/i, 'inbox'],
+  [/Capture/i, 'capture'],
+  [/Fraud/i, 'fraud'],
+  [/Approv/i, 'verify'],
+  [/Reject/i, 'verify'],
+  [/Queue/i, 'verify'],
+  [/Batch/i, 'verify'],
+  [/Verified/i, 'verify'],
+  [/Trend/i, 'analytics'],
+  [/Verification/i, 'verify'],
+];
+
+function wireKpiLinks(){
+  document.querySelectorAll('.kpi').forEach(el=>{
+    const linkEl = el.querySelector('.kpi-link');
+    if(!linkEl) return;
+    const txt = linkEl.textContent;
+    const match = KPI_LINK_MAP.find(([re])=>re.test(txt));
+    if(match){
+      el.style.cursor = 'pointer';
+      el.onclick = ()=>go(match[1]);
+    }
+  });
+}
+
+function render(){
+  if(current === 'login'){
+    stage.innerHTML = `<div class="app-shell light-theme" id="appShell">${BODIES.login()}</div>`;
+    const signIn = document.querySelector('.login-card .btn.primary');
+    if(signIn) signIn.onclick = ()=>go('dashboard');
+    const ssoBtn = document.querySelector('.sso-continue');
+    if(ssoBtn) ssoBtn.onclick = ()=>go('dashboard');
+    const mt0 = document.getElementById('modeToggle');
+    if(mt0){ mt0.onclick = ()=>{ deploymentMode = deploymentMode==='standalone' ? 'embedded' : 'standalone'; render(); }; }
+    return;
+  }
+  const s = SCREENS.find(sc=>sc.key===current) || SCREENS[1];
+  stage.innerHTML = shellChrome(s.key, BODIES[s.key]());
+  const sw = document.getElementById('themeSwitch');
+  if(sw){ sw.onclick = ()=>document.getElementById('appShell').classList.toggle('light-theme'); }
+  const mt = document.getElementById('modeToggle');
+  if(mt){ mt.onclick = ()=>{ deploymentMode = deploymentMode==='standalone' ? 'embedded' : 'standalone'; render(); }; }
+  wireKpiLinks();
+}
+function go(key){ current = key; render(); window.scrollTo(0,0); }
+document.getElementById('restartDemo').onclick = (e)=>{ e.preventDefault(); go('login'); };
+
+/* ================= Cheque image generator (self-contained SVG, no external assets) ================= */
+function chequeSVG(o){
+  o = Object.assign({bank:'HDFC Bank', ifsc:'HDFC0001234', branch:'Main Branch', payee:'Payee Name',
+    amount:'0', amountWords:'Zero Only', date:'DDMMYYYY', chequeNo:'000000', accNo:'50100123456789',
+    signed:true, flagCrease:false}, o);
+  const d = (o.date+'--------').slice(0,8).split('');
+  const dateBoxes = d.map((c,i)=>`<rect x="${472+i*13}" y="14" width="12" height="14" fill="#fff" stroke="#B9AE7E" stroke-width="1"/><text x="${478+i*13}" y="25" text-anchor="middle" font-family="Courier New,monospace" font-size="10" fill="#333">${c.trim()}</text>`).join('');
+  return `<svg viewBox="0 0 620 250" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:560px;height:auto;display:block;margin:0 auto;border-radius:8px;box-shadow:0 10px 26px rgba(0,0,0,.4);">
+    <defs><pattern id="gp${o.chequeNo}" width="14" height="14" patternTransform="rotate(20)" patternUnits="userSpaceOnUse"><path d="M0 7 H14" stroke="#EDE6C8" stroke-width="1"/></pattern></defs>
+    <rect x="0" y="0" width="620" height="250" rx="8" fill="#FBF7E9"/>
+    <rect x="6" y="6" width="608" height="238" rx="5" fill="url(#gp${o.chequeNo})"/>
+    <rect x="1" y="1" width="618" height="248" rx="7" fill="none" stroke="#CDBF8A" stroke-width="2"/>
+    <circle cx="44" cy="34" r="17" fill="#1E3A5F"/><text x="44" y="39" text-anchor="middle" font-family="Georgia,serif" font-size="13" fill="#FBF7E9" font-weight="700">${o.bank[0]}</text>
+    <text x="70" y="32" font-family="Georgia, serif" font-size="17" font-weight="700" fill="#1E3A5F">${o.bank}</text>
+    <text x="70" y="47" font-family="Arial" font-size="9" fill="#6B6248">IFSC ${o.ifsc} &middot; ${o.branch}</text>
+    <text x="596" y="14" text-anchor="end" font-family="Arial" font-size="9" fill="#6B6248">Cheque No.</text>
+    <text x="596" y="26" text-anchor="end" font-family="Courier New,monospace" font-size="12" fill="#333">${o.chequeNo}</text>
+    ${dateBoxes}
+    <text x="24" y="92" font-family="Arial" font-size="11" fill="#333">Pay</text>
+    <text x="56" y="93" font-family="'Segoe Script','Brush Script MT',cursive" font-size="18" fill="#1a1a2e">${o.payee}</text>
+    <line x1="52" y1="98" x2="420" y2="98" stroke="#A79A6B" stroke-width="1"/>
+    <text x="428" y="92" font-family="Arial" font-size="9" fill="#555">OR BEARER</text>
+    <rect x="474" y="70" width="122" height="30" fill="#fff" stroke="#1E3A5F" stroke-width="1.4" rx="3"/>
+    <text x="484" y="91" font-family="Arial" font-size="15" font-weight="700" fill="#1E3A5F">&#8377; ${o.amount}</text>
+    <text x="24" y="126" font-family="Arial" font-size="11" fill="#333">Rupees</text>
+    <text x="66" y="127" font-family="'Segoe Script','Brush Script MT',cursive" font-size="15" fill="#1a1a2e">${o.amountWords}</text>
+    <line x1="60" y1="131" x2="598" y2="131" stroke="#A79A6B" stroke-width="1"/>
+    <text x="602" y="127" font-family="Arial" font-size="9" fill="#555" text-anchor="start">ONLY</text>
+    <line x1="130" y1="152" x2="300" y2="178" stroke="#555" stroke-width="1"/>
+    <line x1="130" y1="178" x2="300" y2="152" stroke="#555" stroke-width="1"/>
+    <text x="148" y="169" font-family="Arial" font-size="7.5" fill="#555" transform="rotate(-12 148 169)">A/C PAYEE ONLY</text>
+    ${o.signed ? `<path d="M470 178 C 484 162, 500 190, 514 172 S 540 160, 552 176 S 570 168, 582 178" fill="none" stroke="#1a2a5e" stroke-width="1.6" stroke-linecap="round"/>` : ''}
+    <text x="470" y="200" font-family="Arial" font-size="7.5" fill="#888">Authorized Signatory</text>
+    ${o.flagCrease ? `<ellipse cx="520" cy="176" rx="46" ry="20" fill="none" stroke="#DC2626" stroke-width="1.6" stroke-dasharray="4 3"/><text x="520" y="222" text-anchor="middle" font-family="Arial" font-size="8" fill="#DC2626" font-weight="700">crease / low signature confidence</text>` : ''}
+    <text x="24" y="234" font-family="Courier New,monospace" font-size="14" letter-spacing="3" fill="#1a1a1a">${o.chequeNo}&#9124; ${o.ifsc}&#9124; ${o.accNo}&#9126;</text>
+  </svg>`;
+}
+function chequeThumb(o, active){
+  return `<div style="width:78px;flex:0 0 auto;opacity:${active?1:0.35};transform:scale(${active?1:0.92});transition:.4s;">
+    <div style="border-radius:5px;overflow:hidden;border:2px solid ${active?'var(--primary)':'transparent'};">${chequeSVG(Object.assign({},o,{payee:'',amountWords:''}))}</div>
+  </div>`;
+}
+
+/* ================= LIVE DEMO: 5 dummy cheques, start to finish ================= */
+const DEMO_SCRIPT = [
+{
+  crumb:"", title:"Live Demo",
+  caption:"A scripted walkthrough &mdash; 5 dummy cheques, start to finish. Use Play, or step through manually.",
+  body:`<div class="demo-title-card">
+    <h1>ChqFlow360</h1>
+    <p>Live Demo &mdash; 5 cheques, captured, checked by AI agents, and decided on by a checker, end to end. Every screen below is the real prototype; nothing here is faked footage.</p>
+    <div class="agent-grid">
+      <div class="agent-card"><span class="ic">&#128247;</span><span>VisionAI</span></div>
+      <div class="agent-card"><span class="ic">&#10003;</span><span>ValidateAI</span></div>
+      <div class="agent-card"><span class="ic">&#128279;</span><span>MatchAI</span></div>
+      <div class="agent-card"><span class="ic">&#128737;</span><span>FraudAI</span></div>
+    </div>
+  </div>`
+},
+{
+  crumb:"Transaction Flow", title:"Dashboard",
+  caption:"Maker A. Rao signs in. Today's queue is empty so far &mdash; the batch of 5 hasn't landed yet.",
+  body:`<div class="page-head"><div><div class="breadcrumb">Home</div><h3>Hey A. Rao &#128075;</h3><div class="desc">Here's what's happening with your cheque operations today.</div></div></div>
+    <div class="grid kpi-grid">
+      <div class="kpi c-blue"><div class="label">Cheques Received</div><div class="value">428</div><div class="delta flat">Before today's batch</div></div>
+      <div class="kpi c-green"><div class="label">OCR Completed</div><div class="value">391</div><div class="delta flat">91.3% Accuracy</div></div>
+      <div class="kpi c-amber"><div class="label">Pending Verification</div><div class="value">0</div><div class="delta flat">Queue clear</div></div>
+      <div class="kpi c-red"><div class="label">Fraud Alerts</div><div class="value">0</div><div class="delta flat">None open</div></div>
+    </div>`
+},
+{
+  crumb:"Transaction Flow", title:"Capture & Review — Scanning",
+  caption:"Cheque #100001 goes through the scanner first &mdash; VisionAI captures the image immediately. Four more follow the same way.",
+  body:`<div class="page-head"><div><div class="breadcrumb">Transaction Flow</div><h3>Capture &amp; Review</h3><div class="desc">Scanning cheque 1 of 5&hellip;</div></div></div>
+    <div class="scan-frame">
+      <div class="scan-line"></div>
+      ${chequeSVG({bank:'HDFC Bank', ifsc:'HDFC0001234', branch:'Mumbai Fort', payee:'Anand Constructions', amount:'2,45,000', amountWords:'Two Lakh Forty Five Thousand Only', date:'09072026', chequeNo:'100001', accNo:'50100987650001', signed:true})}
+    </div>
+    <div class="thumb-row">
+      ${chequeThumb({bank:'HDFC Bank', chequeNo:'100001'}, true)}
+      ${chequeThumb({bank:'ICICI Bank', chequeNo:'100002'}, false)}
+      ${chequeThumb({bank:'SBI', chequeNo:'100003'}, false)}
+      ${chequeThumb({bank:'HDFC Bank', chequeNo:'100004'}, false)}
+      ${chequeThumb({bank:'Axis Bank', chequeNo:'100005'}, false)}
+    </div>`
+},
+{
+  crumb:"Transaction Flow", title:"Capture & Review",
+  caption:"A. Rao uploads a batch of 5 cheques via Bulk Batch. All five land in Active Entries as &ldquo;Processing.&rdquo;",
+  body:`<div class="page-head"><div><div class="breadcrumb">Transaction Flow</div><h3>Capture &amp; Review</h3><div class="desc">Bulk Batch &mdash; batch_demo_5.xlsx uploaded</div></div></div>
+    <div class="card"><div class="card-head"><h4>Active Entries</h4><span class="hint">5 of 5 uploaded</span></div>
+    <table><tr><th>Cheque</th><th>Customer</th><th class="num">Amount</th><th>Status</th></tr>
+      <tr class="demo-flash"><td>#100001</td><td class="dim">Anand Constructions</td><td class="num">&#8377;2,45,000</td><td><span class="chip warning">Processing</span></td></tr>
+      <tr class="demo-flash"><td>#100002</td><td class="dim">Nova Infra LLP</td><td class="num">&#8377;89,500</td><td><span class="chip warning">Processing</span></td></tr>
+      <tr class="demo-flash"><td>#100003</td><td class="dim">Verve Realty</td><td class="num">&#8377;6,12,000</td><td><span class="chip warning">Processing</span></td></tr>
+      <tr class="demo-flash"><td>#100004</td><td class="dim">Global Steel Ltd.</td><td class="num">&#8377;4,10,000</td><td><span class="chip warning">Processing</span></td></tr>
+      <tr class="demo-flash"><td>#100005</td><td class="dim">XYZ Traders</td><td class="num">&#8377;8,75,000</td><td><span class="chip warning">Processing</span></td></tr>
+    </table></div>`
+},
+{
+  crumb:"Transaction Flow", title:"Capture & Review",
+  caption:"VisionAI + ReadAI finish OCR on all five in seconds. Confidence scores attached to every field.",
+  body:`<div class="page-head"><div><div class="breadcrumb">Transaction Flow</div><h3>Capture &amp; Review</h3><div class="desc">OCR complete &mdash; 5 of 5 read</div></div></div>
+    <div class="card"><div class="card-head"><h4>Active Entries</h4><span class="hint">Ready for review</span></div>
+    <table><tr><th>Cheque</th><th>Customer</th><th class="num">Amount</th><th>OCR Confidence</th><th>Status</th></tr>
+      <tr><td>#100001</td><td class="dim">Anand Constructions</td><td class="num">&#8377;2,45,000</td><td><span class="chip success">98%</span></td><td><span class="chip success">Read</span></td></tr>
+      <tr class="demo-flash"><td>#100002</td><td class="dim">Nova Infra LLP</td><td class="num">&#8377;89,500</td><td><span class="chip warning">83% &mdash; verify words</span></td><td><span class="chip success">Read</span></td></tr>
+      <tr><td>#100003</td><td class="dim">Verve Realty</td><td class="num">&#8377;6,12,000</td><td><span class="chip success">95%</span></td><td><span class="chip success">Read</span></td></tr>
+      <tr><td>#100004</td><td class="dim">Global Steel Ltd.</td><td class="num">&#8377;4,10,000</td><td><span class="chip success">97%</span></td><td><span class="chip success">Read</span></td></tr>
+      <tr><td>#100005</td><td class="dim">XYZ Traders</td><td class="num">&#8377;8,75,000</td><td><span class="chip success">96%</span></td><td><span class="chip success">Read</span></td></tr>
+    </table></div>`
+},
+{
+  crumb:"Transaction Flow", title:"Capture & Review — #100002",
+  caption:"A. Rao opens #100002 inline &mdash; ValidateAI flagged &ldquo;amount in words&rdquo; as medium-confidence. One correction, no new screen.",
+  body:`<div class="page-head"><div><div class="breadcrumb">Transaction Flow</div><h3>Capture &amp; Review &mdash; #100002</h3><div class="desc">Inline review, same screen as capture</div></div>
+    <button class="btn primary">Confirm &amp; Submit for Checker</button></div>
+    <div class="two-col">
+      <div>${chequeSVG({bank:'ICICI Bank', ifsc:'ICIC0000456', branch:'Pune Camp', payee:'Nova Infra LLP', amount:'89,500', amountWords:'Eighty Nine Thousand Five Hundred Only', date:'09072026', chequeNo:'100002', accNo:'62305471002', signed:true})}</div>
+      <div class="card"><div class="card-head"><h4>OCR fields</h4></div>
+        <div class="form-grid">
+          <div class="field"><label>Amount (&#8377;)</label><div class="input">89,500</div><div class="conf high">96% confidence</div></div>
+          <div class="field"><label>Amount in Words</label><div class="input demo-flash">Eighty Nine Thousand Five Hundred</div><div class="conf high">Corrected &amp; confirmed</div></div>
+          <div class="field"><label>Payee</label><div class="input">Nova Infra LLP</div><div class="conf high">95% confidence</div></div>
+        </div>
+        <div class="tag-row" style="margin-top:12px;"><span class="chip success">Figures = words match</span></div>
+      </div>
+    </div>`
+},
+{
+  crumb:"Transaction Flow", title:"Verification Desk",
+  caption:"All 5 cheques submitted together &mdash; Verification Desk shows every decision-ready column in one table.",
+  body:`<div class="page-head"><div><div class="breadcrumb">Transaction Flow</div><h3>Verification Desk</h3><div class="desc">5 cheques awaiting P. Iyer's decision</div></div></div>
+    <div class="card"><div class="card-head"><h4>Queue</h4></div>
+    <table><tr><th>Cheque</th><th>Customer</th><th class="num">Amount</th><th>Signature</th><th>Hygiene</th><th>Fraud</th></tr>
+      <tr><td>#100001</td><td class="dim">Anand Constructions</td><td class="num">&#8377;2,45,000</td><td><span class="chip success">96%</span></td><td><span class="chip success">OK</span></td><td><span class="chip neutral">None</span></td></tr>
+      <tr><td>#100002</td><td class="dim">Nova Infra LLP</td><td class="num">&#8377;89,500</td><td><span class="chip success">91%</span></td><td><span class="chip success">OK</span></td><td><span class="chip neutral">None</span></td></tr>
+      <tr><td>#100003</td><td class="dim">Verve Realty</td><td class="num">&#8377;6,12,000</td><td><span class="chip critical">61%</span></td><td><span class="chip success">OK</span></td><td><span class="chip neutral">None</span></td></tr>
+      <tr><td>#100004</td><td class="dim">Global Steel Ltd.</td><td class="num">&#8377;4,10,000</td><td><span class="chip success">94%</span></td><td><span class="chip critical">Words &ne; figures</span></td><td><span class="chip neutral">None</span></td></tr>
+      <tr><td>#100005</td><td class="dim">XYZ Traders</td><td class="num">&#8377;8,75,000</td><td><span class="chip success">93%</span></td><td><span class="chip success">OK</span></td><td><span class="chip critical">Duplicate cheque no.</span></td></tr>
+    </table></div>`
+},
+{
+  crumb:"Transaction Flow", title:"Verification Desk — Approve",
+  caption:"#100001 is clean across every check. One click &mdash; Approved, Registered.",
+  body:`<div class="page-head"><div><div class="breadcrumb">Transaction Flow</div><h3>Verification Desk</h3><div class="desc">#100001 &mdash; Anand Constructions</div></div></div>
+    <div class="card demo-flash"><div class="card-head"><h4>#100001 &mdash; Decision</h4></div>
+      <div class="tag-row" style="margin-bottom:12px;"><span class="chip success">Signature match: 96%</span><span class="chip success">Figures = words match</span><span class="chip neutral">No fraud flags</span></div>
+      <div style="display:flex; gap:8px;"><button class="btn success" style="background:var(--success);border-color:var(--success);color:#062b12;">&#10003; Approved</button></div>
+      <div class="flow-note" style="margin-top:12px;margin-bottom:0;">Status &rarr; <b style="color:var(--text)">Registered</b>. Storage location assigned automatically.</div>
+    </div>`
+},
+{
+  crumb:"Transaction Flow", title:"Verification Desk — Resubmit",
+  caption:"#100004's amount-in-words doesn't match the figures. P. Iyer resubmits with a mandatory remark &mdash; back to A. Rao.",
+  body:`<div class="page-head"><div><div class="breadcrumb">Transaction Flow</div><h3>Verification Desk</h3><div class="desc">#100004 &mdash; Global Steel Ltd.</div></div></div>
+    <div class="card demo-flash"><div class="card-head"><h4>#100004 &mdash; Decision</h4></div>
+      <div class="tag-row" style="margin-bottom:12px;"><span class="chip critical">Words &ne; figures &mdash; &#8377;4,10,000 vs &ldquo;Four Lakh Only&rdquo;</span></div>
+      <div class="field" style="margin-bottom:10px;"><label>Remarks <span class="req">required</span></label><div class="input">Amount in words doesn't match figures &mdash; please re-key.</div></div>
+      <div style="display:flex; gap:8px;"><button class="btn warning" style="background:var(--warning);border-color:var(--warning);color:#2b1b02;">&#8635; Resubmitted to Maker</button></div>
+    </div>`
+},
+{
+  crumb:"Transaction Flow", title:"Capture & Review — #100004",
+  caption:"A. Rao sees the remark, corrects the field, resubmits. No separate screen, no re-scan needed.",
+  body:`<div class="page-head"><div><div class="breadcrumb">Transaction Flow</div><h3>Capture &amp; Review &mdash; #100004</h3><div class="desc">Returned from Verification Desk with remark</div></div>
+    <button class="btn primary">Confirm &amp; Submit for Checker</button></div>
+    <div class="card">
+      <div class="flow-note amber">Checker remark: &ldquo;Amount in words doesn't match figures &mdash; please re-key.&rdquo;</div>
+      <div class="form-grid">
+        <div class="field"><label>Amount (&#8377;)</label><div class="input">4,10,000</div><div class="conf high">97% confidence</div></div>
+        <div class="field"><label>Amount in Words</label><div class="input demo-flash">Four Lakh Ten Thousand Only</div><div class="conf high">Corrected</div></div>
+      </div>
+      <div class="tag-row" style="margin-top:12px;"><span class="chip success">Figures = words match</span></div>
+    </div>`
+},
+{
+  crumb:"Transaction Flow", title:"Fraud Detection",
+  caption:"#100003's signature match came back at 61% &mdash; below the 85% threshold. FraudAI auto-escalates it here, out of the routine queue.",
+  body:`<div class="page-head"><div><h3>Fraud Detection</h3><div class="desc">1 new flag from today's batch</div></div></div>
+    <div class="card demo-flash"><div class="card-head"><h4>Flagged for Review</h4></div>
+    <table><tr><th>Cheque</th><th>Customer</th><th>Flag</th><th class="num">Score</th></tr>
+      <tr><td>#100003</td><td class="dim">Verve Realty</td><td><span class="chip critical">Signature mismatch</span></td><td class="num">61%</td></tr>
+    </table></div>`
+},
+{
+  crumb:"Transaction Flow", title:"Fraud Detection — Cleared",
+  caption:"Risk reviews the scan: poor image quality on a corner crease, not a real mismatch. Cleared &mdash; rejoins the normal queue.",
+  body:`<div class="page-head"><div><h3>Fraud Detection</h3><div class="desc">#100003 reviewed by S. Deshmukh (Risk)</div></div></div>
+    <div class="preview-modal">
+      <div class="preview-modal-head"><h4>&#128065; Document Preview &mdash; #100003</h4></div>
+      <div class="two-col"><div>${chequeSVG({bank:'SBI', ifsc:'SBIN0002211', branch:'Andheri East', payee:'Verve Realty', amount:'6,12,000', amountWords:'Six Lakh Twelve Thousand Only', date:'09072026', chequeNo:'100003', accNo:'31009982215', signed:true, flagCrease:true})}</div>
+        <div><div class="img-placeholder" style="height:88px;">Specimen signature on file</div>
+        <table style="margin-top:10px;"><tr><td class="dim">Verdict</td><td><span class="chip success">Cleared &mdash; image quality, not fraud</span></td></tr></table></div>
+      </div>
+      <div class="preview-caption">Rejoins Verification Desk for a standard checker decision.</div>
+    </div>`
+},
+{
+  crumb:"Transaction Flow", title:"Verification Desk — Final decisions",
+  caption:"#100003 and #100004 both approved on their second pass. #100005 is a genuine duplicate cheque number &mdash; rejected.",
+  body:`<div class="page-head"><div><div class="breadcrumb">Transaction Flow</div><h3>Verification Desk</h3><div class="desc">Closing out today's batch of 5</div></div></div>
+    <table><tr><th>Cheque</th><th>Customer</th><th class="num">Amount</th><th>Outcome</th></tr>
+      <tr><td>#100001</td><td class="dim">Anand Constructions</td><td class="num">&#8377;2,45,000</td><td><span class="badge-solid success">Registered</span></td></tr>
+      <tr><td>#100002</td><td class="dim">Nova Infra LLP</td><td class="num">&#8377;89,500</td><td><span class="badge-solid success">Registered</span></td></tr>
+      <tr class="demo-flash"><td>#100003</td><td class="dim">Verve Realty</td><td class="num">&#8377;6,12,000</td><td><span class="badge-solid success">Registered</span></td></tr>
+      <tr class="demo-flash"><td>#100004</td><td class="dim">Global Steel Ltd.</td><td class="num">&#8377;4,10,000</td><td><span class="badge-solid success">Registered</span></td></tr>
+      <tr class="demo-flash"><td>#100005</td><td class="dim">XYZ Traders</td><td class="num">&#8377;8,75,000</td><td><span class="badge-solid danger">Rejected &mdash; duplicate</span></td></tr>
+    </table>`
+},
+{
+  crumb:"Transaction Flow", title:"Dashboard",
+  caption:"End state, under two minutes of processing: 4 of 5 registered, 1 correctly rejected, 1 fraud flag investigated and cleared.",
+  body:`<div class="page-head"><div><div class="breadcrumb">Home</div><h3>Hey A. Rao &#128075;</h3><div class="desc">Today's batch is closed out.</div></div></div>
+    <div class="grid kpi-grid">
+      <div class="kpi c-blue demo-flash"><div class="label">Cheques Received</div><div class="value">433</div><div class="delta up">&#9650; +5 today</div></div>
+      <div class="kpi c-green demo-flash"><div class="label">Registered (Batch)</div><div class="value">4 / 5</div><div class="delta up">80% straight-through</div></div>
+      <div class="kpi c-amber demo-flash"><div class="label">Fraud Flags Resolved</div><div class="value">1</div><div class="delta flat">Cleared, false positive</div></div>
+      <div class="kpi c-red demo-flash"><div class="label">Rejected (Batch)</div><div class="value">1</div><div class="delta down">Duplicate cheque no.</div></div>
+    </div>`
+},
+{
+  crumb:"Administration", title:"Audit Logs",
+  caption:"Every action from this run &mdash; capture, correction, approval, resubmission, fraud clearance, rejection &mdash; logged automatically.",
+  body:`<div class="page-head"><div><h3>Audit Logs</h3><div class="desc">Filtered: today's demo batch</div></div></div>
+    <table><tr><th>Timestamp</th><th>User</th><th>Action</th></tr>
+      <tr><td class="dim num">Just now</td><td>P. Iyer</td><td>Rejected #100005 &mdash; &ldquo;Duplicate cheque number&rdquo;</td></tr>
+      <tr><td class="dim num">Just now</td><td>P. Iyer</td><td>Approved #100004</td></tr>
+      <tr><td class="dim num">Just now</td><td>P. Iyer</td><td>Approved #100003</td></tr>
+      <tr><td class="dim num">Just now</td><td>S. Deshmukh</td><td>Cleared fraud flag on #100003</td></tr>
+      <tr><td class="dim num">Just now</td><td>A. Rao</td><td>Resubmitted #100004</td></tr>
+      <tr><td class="dim num">Just now</td><td>P. Iyer</td><td>Resubmitted #100004 to maker</td></tr>
+      <tr><td class="dim num">Just now</td><td>P. Iyer</td><td>Approved #100002, #100001</td></tr>
+      <tr><td class="dim num">Just now</td><td>A. Rao</td><td>Submitted 5 cheques for checker approval</td></tr>
+    </table>`
+},
+{
+  crumb:"", title:"Demo Complete",
+  caption:"That's the full loop &mdash; capture to registered, with AI catching a genuine duplicate and clearing a false fraud alarm along the way.",
+  body:`<div class="demo-title-card">
+    <h1>Demo Complete</h1>
+    <p>5 cheques in. 4 registered, 1 correctly rejected, 1 fraud flag investigated and cleared &mdash; every step logged.</p>
+    <div class="tag-row" style="margin-top:20px;"><button class="btn primary" onclick="goScene(0)">&#8635; Replay</button><button class="btn" onclick="closeDemo()">Exit to Prototype</button></div>
+  </div>`
+},
+];
+
+let demoIndex = 0, demoPlaying = false, demoTimer = null, demoSpeed = 1;
+const demoPlayer = document.getElementById('demoPlayer');
+
+function openDemo(){
+  demoPlayer.style.display = 'block';
+  demoIndex = 0;
+  renderDemoShell();
+  demoPlaying = true;
+  scheduleDemoNext();
+}
+function closeDemo(){
+  demoPlaying = false;
+  if(demoTimer) clearTimeout(demoTimer);
+  demoPlayer.style.display = 'none';
+  demoPlayer.innerHTML = '';
+}
+function renderDemoShell(){
+  const dots = DEMO_SCRIPT.map((_,i)=>`<div class="demo-dot ${i<demoIndex?'done':''} ${i===demoIndex?'active':''}" onclick="goScene(${i})"></div>`).join('');
+  demoPlayer.innerHTML = `<div class="app-shell demo-player">
+    <button class="btn xs ghost demo-close" onclick="closeDemo()">&times; Exit Demo</button>
+    <div class="demo-stage" id="demoStage"></div>
+    <div class="demo-caption-bar">
+      <div class="demo-caption-text" id="demoCaption"></div>
+      <div class="demo-controls">
+        <button class="demo-btn" id="demoPlayBtn" onclick="toggleDemoPlay()">&#9654;</button>
+        <button class="demo-btn ghost" onclick="prevScene()">&#8249;</button>
+        <button class="demo-btn ghost" onclick="nextScene()">&#8250;</button>
+        <div class="demo-scrubber">${dots}</div>
+        <div class="demo-scene-label" id="demoLabel"></div>
+        <div class="demo-speed">
+          <button onclick="setDemoSpeed(0.5)" id="spd0.5">0.5x</button>
+          <button onclick="setDemoSpeed(1)" id="spd1" class="active">1x</button>
+          <button onclick="setDemoSpeed(2)" id="spd2">2x</button>
+        </div>
+      </div>
+    </div>
+  </div>`;
+  renderDemoScene();
+}
+function renderDemoScene(){
+  const s = DEMO_SCRIPT[demoIndex];
+  const stageEl = document.getElementById('demoStage');
+  stageEl.innerHTML = `<div class="demo-scene active">${s.crumb?`<div class="breadcrumb" style="margin-bottom:4px;">${s.crumb}</div>`:''}${s.body}</div>`;
+  document.getElementById('demoCaption').innerHTML = s.caption;
+  document.getElementById('demoLabel').textContent = 'Scene '+(demoIndex+1)+' / '+DEMO_SCRIPT.length;
+  const btn = document.getElementById('demoPlayBtn');
+  if(btn) btn.innerHTML = demoPlaying ? '&#10074;&#10074;' : '&#9654;';
+  [...document.querySelectorAll('.demo-dot')].forEach((d,i)=>{
+    d.classList.toggle('done', i<demoIndex);
+    d.classList.toggle('active', i===demoIndex);
+  });
+}
+function scheduleDemoNext(){
+  if(demoTimer) clearTimeout(demoTimer);
+  if(!demoPlaying) return;
+  const base = demoIndex===0 || demoIndex===DEMO_SCRIPT.length-1 ? 3200 : 4200;
+  demoTimer = setTimeout(()=>{
+    if(demoIndex < DEMO_SCRIPT.length-1){ demoIndex++; renderDemoScene(); scheduleDemoNext(); }
+    else { demoPlaying = false; renderDemoScene(); }
+  }, base/demoSpeed);
+}
+function toggleDemoPlay(){
+  demoPlaying = !demoPlaying;
+  renderDemoScene();
+  if(demoPlaying) scheduleDemoNext(); else if(demoTimer) clearTimeout(demoTimer);
+}
+function goScene(i){
+  demoIndex = Math.max(0, Math.min(DEMO_SCRIPT.length-1, i));
+  renderDemoScene();
+  if(demoPlaying) scheduleDemoNext();
+}
+function nextScene(){ if(demoIndex<DEMO_SCRIPT.length-1){ goScene(demoIndex+1); } }
+function prevScene(){ if(demoIndex>0){ goScene(demoIndex-1); } }
+function setDemoSpeed(x){
+  demoSpeed = x;
+  ['0.5','1','2'].forEach(v=>document.getElementById('spd'+v).classList.toggle('active', parseFloat(v)===x));
+  if(demoPlaying) scheduleDemoNext();
+}
+
+render();
+</script>
